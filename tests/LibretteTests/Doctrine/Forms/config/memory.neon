@@ -1,0 +1,5 @@
+doctrine:
+	driver: pdo_sqlite
+	memory: true
+	metadata:
+		LibretteTests\Doctrine: annotations(%appDir%/LibretteTests/Doctrine/Forms/models)
