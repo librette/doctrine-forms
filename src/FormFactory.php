@@ -7,7 +7,7 @@ use Nette;
 /**
  * @author David Matějka
  */
-class FormFactory extends Nette\Object implements Forms\IFormFactory
+class FormFactory extends Nette\Object
 {
 
 	/** @var \Librette\Doctrine\Forms\MapperFactory */
