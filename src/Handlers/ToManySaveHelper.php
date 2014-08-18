@@ -17,6 +17,8 @@ use Symfony\Component\Validator\ValidatorInterface;
 
 /**
  * @author David Matejka
+ *
+ * @internal
  */
 class ToManySaveHelper extends Object
 {

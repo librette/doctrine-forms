@@ -179,8 +179,9 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * @param
+	 * @param mixed
 	 * @param object
+	 * @internal call only from the IHandler
 	 */
 	public function loadValues($components, $entity)
 	{
@@ -189,8 +190,9 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * @param mixed $components
-	 * @param object $entity
+	 * @param mixed
+	 * @param object
+	 * @internal call only from the IHandler
 	 */
 	public function saveValues($components, $entity)
 	{
