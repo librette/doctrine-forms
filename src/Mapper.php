@@ -4,11 +4,16 @@ namespace Librette\Doctrine\Forms;
 use Doctrine\ORM;
 use Librette\Doctrine\EntityWrapper;
 use Librette\Doctrine\Forms\Handlers;
+use Librette\Doctrine\WrappedEntity;
 use Librette\Forms\IMapper;
 use Nette\ComponentModel\Container;
+use Nette\ComponentModel\IComponent;
 use Nette\Forms\Controls;
 use Nette\Forms\Form;
 use Nette\Object;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Validator\ValidatorInterface;
 
 /**
  * @author David Matějka
@@ -17,16 +22,14 @@ class Mapper extends Object implements IMapper
 {
 
 	const FLUSH = TRUE;
-
 	const NO_FLUSH = FALSE;
 
 	const OPERATION_LOAD = 'load';
-
 	const OPERATION_SAVE = 'save';
 
-	public $onFlush = array();
+	public $onFlush = [];
 
-	public $onAfterFlush = array();
+	public $onAfterFlush = [];
 
 	/** @var object */
 	protected $entity;
@@ -41,21 +44,27 @@ class Mapper extends Object implements IMapper
 	protected $entityManager;
 
 	/** @var IHandler[] */
-	protected $handlers = array();
-
-	/** @var object[] */
-	protected $persistQueue;
+	protected $handlers = [];
 
 	/** @var \Librette\Doctrine\EntityWrapper */
 	protected $entityWrapper;
 
+	/** @var ValidatorInterface */
+	protected $validator;
+
+	/** @var IViolationMapper */
+	protected $violationMapper;
+
+	/** @var IExecutionStrategy */
+	protected $executionStrategy;
+
 
 	/**
 	 *
-	 * @param object $entity
-	 * @param array|null|string $offset
-	 * @param ORM\EntityManager $entityManager
-	 * @param \Librette\Doctrine\EntityWrapper $entityWrapper
+	 * @param object
+	 * @param array|null|string
+	 * @param ORM\EntityManager
+	 * @param \Librette\Doctrine\EntityWrapper
 	 */
 	public function __construct($entity, $offset = NULL, ORM\EntityManager $entityManager, EntityWrapper $entityWrapper)
 	{
@@ -69,9 +78,12 @@ class Mapper extends Object implements IMapper
 	}
 
 
+	/**
+	 * @param string|array
+	 */
 	public function setOffset($offset)
 	{
-		$offset = empty($offset)? array() : $offset;
+		$offset = empty($offset) ? [] : $offset;
 		if (!is_array($offset)) {
 			$offset = explode('.', (string) $offset);
 		}
@@ -89,7 +101,7 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * @param boolean $autoFlush
+	 * @param boolean
 	 */
 	public function setAutoFlush($autoFlush)
 	{
@@ -97,12 +109,18 @@ class Mapper extends Object implements IMapper
 	}
 
 
+	/**
+	 * @param IHandler
+	 */
 	public function addHandler(IHandler $handler)
 	{
 		array_unshift($this->handlers, $handler);
 	}
 
 
+	/**
+	 * @param callable
+	 */
 	public function addSaveHandler($callable)
 	{
 		$this->addHandler(new Handlers\CallbackHandler($callable, function () {
@@ -111,6 +129,9 @@ class Mapper extends Object implements IMapper
 	}
 
 
+	/**
+	 * @param callable
+	 */
 	public function addLoadHandler($callable)
 	{
 		$this->addHandler(new Handlers\CallbackHandler(function () {
@@ -129,7 +150,7 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * @param Form $form
+	 * @param Form
 	 */
 	public function load(Form $form)
 	{
@@ -138,11 +159,18 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * @param Form $form
+	 * @param Form
 	 */
 	public function save(Form $form)
 	{
+		$this->execute(function () {
+			$this->entityManager->persist($this->entity);
+		});
 		$this->saveValues($this->applyOffset($form->getComponents(), $this->offset), $this->entity);
+		if (!$form->isValid()) {
+			return;
+		}
+		$this->getExecutionStrategy()->confirm();
 		if ($this->getAutoFlush()) {
 			$this->flush();
 		}
@@ -150,8 +178,8 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * @param mixed $components
-	 * @param $entity
+	 * @param
+	 * @param object
 	 */
 	public function loadValues($components, $entity)
 	{
@@ -165,11 +193,14 @@ class Mapper extends Object implements IMapper
 	 */
 	public function saveValues($components, $entity)
 	{
-		$this->queueEntity($entity);
 		$this->handle($components, $entity, self::OPERATION_SAVE);
 	}
 
 
+	/**
+	 * @param mixed
+	 * @return IComponent[]
+	 */
 	protected function iterable($value)
 	{
 		if ($value instanceof Container) {
@@ -183,8 +214,8 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * @param $data
-	 * @param array $offset
+	 * @param \ArrayAccess
+	 * @param array
 	 * @return mixed
 	 */
 	protected function applyOffset($data, array $offset)
@@ -198,22 +229,10 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * Adds given entity to queue - it will be persisted together with other entities
-	 *
-	 * @param object $entity
-	 */
-	public function queueEntity($entity)
-	{
-		$this->persistQueue[] = $entity;
-	}
-
-
-	/**
 	 * Persists all entities and executes flush.
 	 */
 	public function flush()
 	{
-		$this->persist();
 		$this->onFlush($this->entity);
 		$this->entityManager->flush();
 		$this->onAfterFlush($this->entity);
@@ -221,21 +240,7 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * Do not call directly unless you really know what are you doing
-	 *
-	 * @internal
-	 */
-	public function persist()
-	{
-		foreach ($this->persistQueue as $key => $entity) {
-			$this->entityManager->persist($entity);
-			unset($this->persistQueue[$key]);
-		}
-	}
-
-
-	/**
-	 * @param $component
+	 * @param IComponent
 	 * @return bool
 	 */
 	protected function shouldSkip($component)
@@ -245,9 +250,9 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * @param $components
-	 * @param $entity
-	 * @param string $operation load or save
+	 * @param mixed
+	 * @param object
+	 * @param string load or save
 	 */
 	protected function handle($components, $entity, $operation)
 	{
@@ -262,17 +267,110 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 * @param $operation
-	 * @param $wrappedEntity
-	 * @param $component
+	 * @param string load or save
+	 * @param WrappedEntity
+	 * @param IComponent
 	 */
-	protected function executeHandlers($operation, $wrappedEntity, $component)
+	protected function executeHandlers($operation, WrappedEntity $wrappedEntity, $component)
 	{
 		foreach ($this->handlers as $handler) {
-			if ($handler->$operation($wrappedEntity, $component, $this)) {
+			try {
+				if ($handler->$operation($wrappedEntity, $component, $this)) {
+					return;
+				}
+			} catch (ValidationException $e) {
 				return;
 			}
 		}
+	}
+
+
+	/**
+	 * @return ValidatorInterface
+	 */
+	public function getValidator()
+	{
+		return $this->validator;
+	}
+
+
+	/**
+	 * @param ValidatorInterface
+	 */
+	public function setValidator(ValidatorInterface $validator)
+	{
+		$this->validator = $validator;
+	}
+
+
+	/**
+	 * @param callable
+	 * @param Container|Controls\BaseControl
+	 */
+	public function validate($callback, $violationsTarget)
+	{
+		if (!$this->validator) {
+			return;
+		}
+		/** @var ConstraintViolationListInterface $result */
+		$result = $callback($this->validator);
+		if (count($result)) {
+			/** @var ConstraintViolationInterface $violation */
+			foreach ($result as $violation) {
+				$this->getViolationMapper()->handle($violation, $violationsTarget);
+			}
+			throw new ValidationException;
+		}
+	}
+
+
+	/**
+	 * @return IViolationMapper
+	 */
+	public function getViolationMapper()
+	{
+		if ($this->violationMapper === NULL) {
+			$this->violationMapper = new DefaultViolationMapper();
+		}
+
+		return $this->violationMapper;
+	}
+
+
+	/**
+	 * @param IViolationMapper $violationMapper
+	 */
+	public function setViolationMapper(IViolationMapper $violationMapper)
+	{
+		$this->violationMapper = $violationMapper;
+	}
+
+
+	/**
+	 * @return IExecutionStrategy
+	 */
+	public function getExecutionStrategy()
+	{
+		if ($this->executionStrategy === NULL) {
+			$this->executionStrategy = new PostponedExecution();
+		}
+
+		return $this->executionStrategy;
+	}
+
+
+	public function setExecutionStrategy(IExecutionStrategy $executionStrategy)
+	{
+		$this->executionStrategy = $executionStrategy;
+	}
+
+
+	/**
+	 * @param callable
+	 */
+	public function execute($callback)
+	{
+		$this->getExecutionStrategy()->execute($callback);
 	}
 
 }

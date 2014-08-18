@@ -5,7 +5,7 @@ if (!$loader = include __DIR__ . '/../../vendor/autoload.php') {
 }
 $loader->add('LibretteTests', __DIR__ . '/../');
 
-\Nette\Diagnostics\Debugger::enable(\Nette\Diagnostics\Debugger::DEVELOPMENT, __DIR__ . '/../tmp/');
+\Tracy\Debugger::enable(\Tracy\Debugger::DEVELOPMENT, __DIR__ . '/../tmp/');
 // configure environment
 Tester\Environment::setup();
 class_alias('Tester\Assert', 'Assert');

@@ -10,6 +10,7 @@ use Nette\Forms\Container;
 use Nette\Forms\Controls\BaseControl;
 use Nette\Forms\Controls\MultiChoiceControl;
 use Nette\Forms\IControl;
+use Symfony\Component\Validator\ValidatorInterface;
 
 /**
  * @author David Matejka
@@ -46,7 +47,7 @@ class ToOneHandler implements IHandler
 		if (!$component instanceof Container && !$component instanceof IControl) {
 			return FALSE;
 		}
-		if($component instanceof MultiChoiceControl) {
+		if ($component instanceof MultiChoiceControl) {
 			return FALSE;
 		}
 		$meta = $wrappedEntity->getMetadata();
@@ -59,11 +60,28 @@ class ToOneHandler implements IHandler
 			$relatedEntity = $this->getRelatedEntity($wrappedEntity, $component, $association);
 			if ($relatedEntity) {
 				$mapper->saveValues($component, $relatedEntity);
-				$wrappedEntity->setValue($component->getName(), $relatedEntity);
+				$mapper->execute(function () use ($wrappedEntity, $component, $relatedEntity) {
+					$wrappedEntity->getEntityManager()->persist($relatedEntity);
+					$wrappedEntity->setValue($component->getName(), $relatedEntity);
+				});
+				$mapper->validate(function (ValidatorInterface $validator) use ($wrappedEntity, $component, $relatedEntity) {
+					return $validator->validatePropertyValue($wrappedEntity, $component->getName(), $relatedEntity);
+				}, $component->getForm());
 			}
 
 		} elseif ($component instanceof IControl) {
-			$wrappedEntity->setValue($component->name, $component->getValue());
+			$value = $component->getValue() ?: NULL;
+			if ($wrappedEntity->hasAssociation($component->name) && $value && !is_object($value)) {
+				$association = $wrappedEntity->getMetadata()->getAssociationMapping($component->name);
+				$repository = $wrappedEntity->getEntityManager()->getRepository($association['targetEntity']);
+				$value = $repository->find($value);
+			}
+			$mapper->execute(function () use ($wrappedEntity, $component, $value) {
+				$wrappedEntity->setValue($component->name, $value);
+			});
+			$mapper->validate(function (ValidatorInterface $validator) use ($wrappedEntity, $component, $value) {
+				return $validator->validatePropertyValue($wrappedEntity->getEntity(), $component->name, $value);
+			}, $component);
 		}
 
 		return TRUE;
@@ -77,7 +95,7 @@ class ToOneHandler implements IHandler
 	 */
 	protected function getIdentifierFromArray(array $identifierFields, array $data)
 	{
-		$relatedEntityIdentifier = array();
+		$relatedEntityIdentifier = [];
 		foreach ($identifierFields as $id) {
 			if (!isset($data[$id]) || !is_scalar($data[$id])) {
 				return FALSE;

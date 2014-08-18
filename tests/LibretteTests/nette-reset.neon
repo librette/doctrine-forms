@@ -6,6 +6,8 @@ extensions:
 	annotations: Kdyby\Annotations\DI\AnnotationsExtension
 	doctrine: Kdyby\Doctrine\DI\OrmExtension
 	events: Kdyby\Events\DI\EventsExtension
+	validator: Kdyby\Validator\DI\ValidatorExtension
+	translator: Kdyby\Translation\DI\TranslationExtension
 	libretteDoctrine: Librette\Doctrine\DI\DoctrineExtension
 
 doctrine:
@@ -31,3 +33,6 @@ services:
 		class: Librette\Doctrine\Forms\Mapper
 		arguments: [%entity%, %offset%]
 		parameters: [entity, offset = NULL]
+translator:
+	dirs:
+		- %appDir%/LibretteTests/Doctrine/Forms/lang

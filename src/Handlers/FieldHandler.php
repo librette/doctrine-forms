@@ -1,7 +1,6 @@
 <?php
 namespace Librette\Doctrine\Forms\Handlers;
 
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Librette\Doctrine\Forms\IHandler;
 use Librette\Doctrine\Forms\Mapper;
 use Librette\Doctrine\WrappedEntity;
@@ -9,6 +8,7 @@ use Nette\ComponentModel\Component;
 use Nette\Forms\Container;
 use Nette\Forms\Controls\BaseControl;
 use Nette\Forms\IControl;
+use Symfony\Component\Validator\ValidatorInterface;
 
 /**
  * @author David Matejka
@@ -47,7 +47,12 @@ class FieldHandler implements IHandler
 		} elseif ($component instanceof Container) {
 			$value = $component->getValues(TRUE);
 		}
-		$wrappedEntity->setValue($component->name, $value);
+		$mapper->execute(function () use ($wrappedEntity, $component, $value) {
+			$wrappedEntity->setValue($component->name, $value);
+		});
+		$mapper->validate(function (ValidatorInterface $validator) use ($wrappedEntity, $component, $value) {
+			return $validator->validatePropertyValue($wrappedEntity->getEntity(), $component->name, $value);
+		}, $component);
 
 		return TRUE;
 	}

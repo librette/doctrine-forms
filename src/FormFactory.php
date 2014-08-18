@@ -23,7 +23,7 @@ class FormFactory extends Nette\Object
 	 */
 	function __construct(MapperFactory $mapperFactory, Forms\IFormFactory $formFactory = NULL)
 	{
-		$this->formFactory = $formFactory ? : new Forms\FormFactory;
+		$this->formFactory = $formFactory ?: new Forms\FormFactory;
 		$this->mapperFactory = $mapperFactory;
 	}
 

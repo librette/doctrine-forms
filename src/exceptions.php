@@ -12,3 +12,9 @@ class UnexpectedValueException extends \UnexpectedValueException implements Exce
 
 
 }
+
+
+class ValidationException extends \RuntimeException implements Exception
+{
+
+}

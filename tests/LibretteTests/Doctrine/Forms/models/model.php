@@ -4,6 +4,7 @@ namespace LibretteTests\Doctrine\Forms;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Librette\Doctrine\Annotations as Librette;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -93,6 +94,7 @@ class CmsArticle
 	/**
 	 * @ORM\ManyToOne(targetEntity="CmsUser", inversedBy="articles")
 	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+	 * @Assert\NotBlank(message="Please select a user.")
 	 * @var CmsUser
 	 */
 	public $user;
@@ -118,7 +120,7 @@ class CmsArticle
 	 * @var array
 	 * @ORM\Column(type="array")
 	 */
-	public $metadata = array();
+	public $metadata = [];
 
 	public function __construct($topic = NULL)
 	{
@@ -259,6 +261,8 @@ class CmsEmail
 
 	/**
 	 * @ORM\Column(length=250)
+	 * @Assert\NotBlank()
+	 * @Assert\Email()
 	 */
 	public $email;
 
@@ -380,11 +384,13 @@ class CmsUser
 
 	/**
 	 * @ORM\Column(type="string", length=255, unique=true)
+	 * @Assert\NotBlank(message="Please fill in your username.")
 	 */
 	public $username;
 
 	/**
 	 * @ORM\Column(type="string", length=255)
+	 * @Assert\NotBlank(message="user.name.notBlank")
 	 */
 	public $name;
 
@@ -417,6 +423,7 @@ class CmsUser
 	 *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
 	 *      )
 	 * @Librette\ManipulateMethods(add="addGroup")
+	 * @Assert\Count(min="2", minMessage="Please select at least two groups.")
 	 */
 	public $groups;
 
