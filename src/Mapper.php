@@ -60,17 +60,18 @@ class Mapper extends Object implements IMapper
 
 
 	/**
-	 *
 	 * @param object
 	 * @param array|null|string
 	 * @param ORM\EntityManager
 	 * @param \Librette\Doctrine\EntityWrapper
+	 * @param ValidatorInterface
 	 */
-	public function __construct($entity, $offset = NULL, ORM\EntityManager $entityManager, EntityWrapper $entityWrapper)
+	public function __construct($entity, $offset = NULL, ORM\EntityManager $entityManager, EntityWrapper $entityWrapper, ValidatorInterface $validator = NULL)
 	{
 		$this->entity = $entity;
 		$this->entityManager = $entityManager;
 		$this->entityWrapper = $entityWrapper;
+		$this->validator = $validator;
 		$this->setOffset($offset);
 		$this->handlers[] = new Handlers\ToManyHandler();
 		$this->handlers[] = new Handlers\ToOneHandler();
