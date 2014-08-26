@@ -50,7 +50,7 @@ class FieldHandler implements IHandler
 		$mapper->execute(function () use ($wrappedEntity, $component, $value) {
 			$wrappedEntity->setValue($component->name, $value);
 		});
-		$mapper->validate(function (ValidatorInterface $validator) use ($wrappedEntity, $component, $value) {
+		$mapper->runValidation(function (ValidatorInterface $validator) use ($wrappedEntity, $component, $value) {
 			return $validator->validatePropertyValue($wrappedEntity->getEntity(), $component->name, $value);
 		}, $component);
 

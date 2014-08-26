@@ -188,7 +188,7 @@ class ToManySaveHelper extends Object
 
 	protected function validate()
 	{
-		$this->mapper->validate(function (ValidatorInterface $validatorInterface) {
+		$this->mapper->runValidation(function (ValidatorInterface $validatorInterface) {
 			return $validatorInterface->validatePropertyValue($this->wrappedEntity->getEntity(), $this->component->name, $this->collection);
 		}, $this->component instanceof BaseControl ? $this->component : $this->component->getForm());
 	}

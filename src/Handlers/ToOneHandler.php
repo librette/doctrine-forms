@@ -64,7 +64,7 @@ class ToOneHandler implements IHandler
 					$wrappedEntity->getEntityManager()->persist($relatedEntity);
 					$wrappedEntity->setValue($component->getName(), $relatedEntity);
 				});
-				$mapper->validate(function (ValidatorInterface $validator) use ($wrappedEntity, $component, $relatedEntity) {
+				$mapper->runValidation(function (ValidatorInterface $validator) use ($wrappedEntity, $component, $relatedEntity) {
 					return $validator->validatePropertyValue($wrappedEntity, $component->getName(), $relatedEntity);
 				}, $component->getForm());
 			}
@@ -79,7 +79,7 @@ class ToOneHandler implements IHandler
 			$mapper->execute(function () use ($wrappedEntity, $component, $value) {
 				$wrappedEntity->setValue($component->name, $value);
 			});
-			$mapper->validate(function (ValidatorInterface $validator) use ($wrappedEntity, $component, $value) {
+			$mapper->runValidation(function (ValidatorInterface $validator) use ($wrappedEntity, $component, $value) {
 				return $validator->validatePropertyValue($wrappedEntity->getEntity(), $component->name, $value);
 			}, $component);
 		}

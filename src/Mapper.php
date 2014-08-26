@@ -6,10 +6,12 @@ use Librette\Doctrine\EntityWrapper;
 use Librette\Doctrine\Forms\Handlers;
 use Librette\Doctrine\WrappedEntity;
 use Librette\Forms\IMapper;
+use Librette\Forms\IValidationMapper;
 use Nette\ComponentModel\Container;
 use Nette\ComponentModel\IComponent;
 use Nette\Forms\Controls;
 use Nette\Forms\Form;
+use Nette\Forms\ISubmitterControl;
 use Nette\Object;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -18,7 +20,7 @@ use Symfony\Component\Validator\ValidatorInterface;
 /**
  * @author David Matějka
  */
-class Mapper extends Object implements IMapper
+class Mapper extends Object implements IMapper, IValidationMapper
 {
 
 	const FLUSH = TRUE;
@@ -57,6 +59,12 @@ class Mapper extends Object implements IMapper
 
 	/** @var IExecutionStrategy */
 	protected $executionStrategy;
+
+	/** @var bool */
+	protected $validating = FALSE;
+
+	/** @var \Nette\Forms\Form */
+	protected $form;
 
 
 	/**
@@ -155,6 +163,7 @@ class Mapper extends Object implements IMapper
 	 */
 	public function load(Form $form)
 	{
+		$this->form = $form;
 		$this->loadValues($this->applyOffset($form->getComponents(), $this->offset), $this->entity);
 	}
 
@@ -162,8 +171,39 @@ class Mapper extends Object implements IMapper
 	/**
 	 * @param Form
 	 */
+	public function validate(Form $form)
+	{
+		$this->form = $form;
+		$originalExecutionStrategy = $this->executionStrategy;
+		$recover = function() use($originalExecutionStrategy) {
+			$this->executionStrategy = $originalExecutionStrategy;
+			$this->validating = FALSE;
+		};
+		$this->executionStrategy = new PostponedExecution();
+		$this->validating = TRUE;
+		try {
+			$this->saveValues($this->applyOffset($form->getComponents(), $this->offset), $this->entity);
+			$recover();
+		} catch(\Exception $e) {
+			$recover();
+		}
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isValidating()
+	{
+		return $this->validating;
+	}
+
+	/**
+	 * @param Form
+	 */
 	public function save(Form $form)
 	{
+		$this->form = $form;
 		$this->execute(function () {
 			$this->entityManager->persist($this->entity);
 		});
@@ -248,7 +288,25 @@ class Mapper extends Object implements IMapper
 	 */
 	protected function shouldSkip($component)
 	{
-		return $component instanceof Controls\Button;
+		if($component instanceof Controls\Button) {
+			return TRUE;
+		}
+		if($this->isValidating() && ($submittedBy = $this->form->submittedBy) && $submittedBy instanceof ISubmitterControl) {
+			$controls = $submittedBy->getValidationScope();
+			if($controls === NULL) {
+				return FALSE;
+			}
+			foreach($controls as $control) {
+				if($control === $component) {
+					return FALSE;
+				}
+				if($control instanceof Container && array_search($component, $control->getComponents(TRUE), TRUE)) {
+					return FALSE;
+				}
+			}
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 
@@ -310,7 +368,7 @@ class Mapper extends Object implements IMapper
 	 * @param callable
 	 * @param Container|Controls\BaseControl
 	 */
-	public function validate($callback, $violationsTarget)
+	public function runValidation($callback, $violationsTarget)
 	{
 		if (!$this->validator) {
 			return;
