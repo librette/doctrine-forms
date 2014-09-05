@@ -1,15 +1,16 @@
 <?php
-namespace LibretteTests\Doctrine\Forms;
+namespace LibretteTests\Doctrine\Forms\Mapper;
 
 use Librette\Doctrine\Forms\FormFactory;
-use Librette\Doctrine\Forms\MapperFactory;
 use Librette\Doctrine\Forms\Mapper;
+use Librette\Doctrine\Forms\MapperFactory;
 use Librette\Forms\IFormWithMapper;
+use LibretteTests\Doctrine\Forms\Model\CmsUser;
+use LibretteTests\Doctrine\Forms\ORMTestCase;
 use Nette;
 use Tester\Assert;
 
 require_once __DIR__ . '/../../bootstrap.php';
-require_once __DIR__ . '/models/model.php';
 
 
 class FormFactoryTestCase extends ORMTestCase

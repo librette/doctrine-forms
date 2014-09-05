@@ -35,4 +35,4 @@ services:
 		parameters: [entity, offset = NULL]
 translator:
 	dirs:
-		- %appDir%/LibretteTests/Doctrine/Forms/lang
+		- %appDir%/lang

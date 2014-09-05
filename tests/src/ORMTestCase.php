@@ -26,12 +26,12 @@ abstract class ORMTestCase extends Tester\TestCase
 	 */
 	protected function createMemoryManager($createSchema = TRUE)
 	{
-		$rootDir = __DIR__ . '/../../../';
+		$rootDir = __DIR__ . '/../';
 
 		$config = new Nette\Configurator();
 		$container = $config->setTempDirectory(TEMP_DIR)
-							->addConfig(__DIR__ . '/../../nette-reset.neon')
-							->addConfig(__DIR__ . '/config/memory.neon')
+							->addConfig(__DIR__ . '/../config/nette-reset.neon')
+							->addConfig(__DIR__ . '/../config/memory.neon')
 							->addParameters(array(
 				'appDir' => $rootDir,
 				'wwwDir' => $rootDir,

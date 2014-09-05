@@ -1,15 +1,18 @@
 <?php
-namespace LibretteTests\Doctrine\Forms;
+namespace LibretteTests\Doctrine\Forms\Mapper;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
-use Kdyby\Doctrine\EntityDao;
 use Kdyby\Replicator\Container;
 use Librette\Doctrine\Forms\FormFactory;
+use LibretteTests\Doctrine\Forms\Model\CmsArticle;
+use LibretteTests\Doctrine\Forms\Model\CmsAttribute;
+use LibretteTests\Doctrine\Forms\Model\CmsGroup;
+use LibretteTests\Doctrine\Forms\Model\CmsUser;
+use LibretteTests\Doctrine\Forms\ORMTestCase;
 use Tester\Assert;
 
 require_once __DIR__ . '/../../bootstrap.php';
-require_once __DIR__ . '/models/model.php';
 
 
 class MapperSaveTestCase extends ORMTestCase
@@ -48,7 +51,7 @@ class MapperSaveTestCase extends ORMTestCase
 
 		$form->getMapper()->save($form);
 
-		Assert::equal(array('foo' => 'bar'), $article->metadata);
+		Assert::equal(['foo' => 'bar'], $article->metadata);
 	}
 
 
@@ -109,7 +112,7 @@ class MapperSaveTestCase extends ORMTestCase
 		$article = new CmsArticle();
 
 		$form = $this->createForm($article);
-		$form->addSelect('user', 'User', array($user->id => $user->id))
+		$form->addSelect('user', 'User', [$user->id => $user->id])
 			 ->setValue($user->id);
 
 		Assert::null($article->user);
@@ -123,9 +126,9 @@ class MapperSaveTestCase extends ORMTestCase
 	{
 		$em = $this->createMemoryManager(TRUE);
 
-		$groupNames = array(1 => 'foo', 'bar', 'lorem', 'ipsum');
+		$groupNames = [1 => 'foo', 'bar', 'lorem', 'ipsum'];
 
-		$groups = array();
+		$groups = [];
 		foreach ($groupNames as $i => $groupName) {
 			$groups[$i] = $group = new CmsGroup($groupName);
 			$group->id = $i;
@@ -139,7 +142,7 @@ class MapperSaveTestCase extends ORMTestCase
 		$form = $this->createForm($user);
 
 		$form->addCheckboxList('groups', 'Groups', $groupNames)
-			 ->setValue(array(2, 3));
+			 ->setValue([2, 3]);
 		$form->getMapper()->save($form);
 
 		Assert::true($user->groups instanceof Collection);
@@ -154,9 +157,9 @@ class MapperSaveTestCase extends ORMTestCase
 	public function testCheckboxContainerSave()
 	{
 		$em = $this->createMemoryManager(TRUE);
-		$groupNames = array(1 => 'foo', 'bar', 'lorem', 'ipsum');
+		$groupNames = [1 => 'foo', 'bar', 'lorem', 'ipsum'];
 
-		$groups = array();
+		$groups = [];
 		foreach ($groupNames as $i => $groupName) {
 			$groups[$i] = $group = new CmsGroup($groupName);
 			$group->id = $i;
@@ -172,7 +175,7 @@ class MapperSaveTestCase extends ORMTestCase
 		foreach ($groups as $group) {
 			$groupsContainer->addCheckbox($group->id, $group->name);
 		}
-		$groupsContainer->setValues(array(1 => FALSE, 2 => TRUE, 3 => TRUE, 4 => FALSE));
+		$groupsContainer->setValues([1 => FALSE, 2 => TRUE, 3 => TRUE, 4 => FALSE]);
 		$form->getMapper()->save($form);
 
 		Assert::true($user->groups instanceof Collection);
@@ -186,11 +189,11 @@ class MapperSaveTestCase extends ORMTestCase
 	public function testToManySaveWithCompositePrimary()
 	{
 		$em = $this->createMemoryManager(TRUE);
-		$attributes = array(
+		$attributes = [
 			1 => new CmsAttribute('attribute1'),
 			2 => new CmsAttribute('attribute2'),
 			3 => new CmsAttribute('attribute3'),
-		);
+		];
 		foreach ($attributes as $attribute) {
 			$em->persist($attribute);
 		}
@@ -210,23 +213,23 @@ class MapperSaveTestCase extends ORMTestCase
 			$container->addText('value');
 		});
 		$form['attributes'] = $replicator;
-		$form->setValues(array(
-			'attributes' => array(
-				array(
+		$form->setValues([
+			'attributes' => [
+				[
 					'attribute' => $attributes[2]->id,
 					'value'     => 'value 2',
-				),
-				array(
+				],
+				[
 					'attribute' => $attributes[3]->id,
 					'value'     => 'value 3',
-				)
-			)
-		));
+				]
+			]
+		]);
 		$form->getMapper()->save($form);
 
 		Assert::same(2, $article->attributes->count());
-		$attributesInArticle = array();
-		$values = array();
+		$attributesInArticle = [];
+		$values = [];
 		foreach($article->attributes as $attribute) {
 			$attributesInArticle[] = $attribute->attribute;
 			$values[] = $attribute->value;

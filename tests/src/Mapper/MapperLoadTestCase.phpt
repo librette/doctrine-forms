@@ -1,15 +1,20 @@
 <?php
-namespace LibretteTests\Doctrine\Forms;
+namespace LibretteTests\Doctrine\Forms\Mapper;
 
 use Kdyby\Replicator\Container;
 use Librette\Doctrine\Forms\FormFactory;
 use Librette\Doctrine\Forms\Mapper\Mapper;
 use Librette\Doctrine\WrappedEntity;
+use LibretteTests\Doctrine\Forms\Model\CmsAddress;
+use LibretteTests\Doctrine\Forms\Model\CmsArticle;
+use LibretteTests\Doctrine\Forms\Model\CmsGroup;
+use LibretteTests\Doctrine\Forms\Model\CmsUser;
+use LibretteTests\Doctrine\Forms\ORMTestCase;
+use LibretteTests\Doctrine\Forms\PresenterMock;
 use Nette;
 use Tester\Assert;
 
 require_once __DIR__ . '/../../bootstrap.php';
-require_once __DIR__ . '/models/model.php';
 
 
 class MapperLoadTestCase extends ORMTestCase

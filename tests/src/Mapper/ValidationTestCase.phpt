@@ -1,14 +1,17 @@
 <?php
-namespace LibretteTests\Doctrine\Forms;
+namespace LibretteTests\Doctrine\Forms\Mapper;
 
 use Kdyby\Replicator\Container;
 use Librette;
+use LibretteTests\Doctrine\Forms\Model\CmsArticle;
+use LibretteTests\Doctrine\Forms\Model\CmsGroup;
+use LibretteTests\Doctrine\Forms\Model\CmsUser;
+use LibretteTests\Doctrine\Forms\ORMTestCase;
 use Nette;
 use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../../bootstrap.php';
-require_once __DIR__ . '/models/model.php';;
 
 
 /**
