@@ -1,14 +1,12 @@
 <?php
 namespace LibretteTests\Doctrine\Forms;
 
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Librette\Doctrine\Forms\FormFactory;
-use Librette\Doctrine\Forms\Mapper;
 use Librette\Doctrine\Forms\MapperFactory;
+use Librette\Doctrine\Forms\Mapper;
 use Librette\Forms\IFormWithMapper;
 use Nette;
 use Tester\Assert;
-use Tester\TestCase;
 
 require_once __DIR__ . '/../../bootstrap.php';
 require_once __DIR__ . '/models/model.php';
@@ -32,7 +30,7 @@ class FormFactoryTestCase extends ORMTestCase
 
 		$mapper = $mapperFactory->create($entity);
 
-		Assert::true($mapper instanceof Mapper);
+		Assert::true($mapper instanceof Mapper\Mapper);
 		Assert::equal($entity, $mapper->getEntity());
 	}
 
@@ -51,7 +49,7 @@ class FormFactoryTestCase extends ORMTestCase
 
 		$mapper = $form->getMapper();
 
-		Assert::true($mapper instanceof Mapper);
+		Assert::true($mapper instanceof Mapper\Mapper);
 		Assert::equal($entity, $mapper->getEntity());
 	}
 }

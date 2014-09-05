@@ -30,7 +30,7 @@ services:
 	- Librette\Doctrine\Forms\FormFactory(..., null)
 	-
 		implement: Librette\Doctrine\Forms\MapperFactory
-		class: Librette\Doctrine\Forms\Mapper
+		class: Librette\Doctrine\Forms\Mapper\Mapper
 		arguments: [%entity%, %offset%]
 		parameters: [entity, offset = NULL]
 translator:

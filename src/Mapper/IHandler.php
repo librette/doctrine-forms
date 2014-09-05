@@ -1,5 +1,5 @@
 <?php
-namespace Librette\Doctrine\Forms;
+namespace Librette\Doctrine\Forms\Mapper;
 
 use Librette\Doctrine\WrappedEntity;
 use Nette\ComponentModel\Component;

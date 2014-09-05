@@ -1,6 +1,8 @@
 <?php
 namespace Librette\Doctrine\Forms;
 
+use Librette\Doctrine\Forms\Mapper\Mapper;
+
 /**
  * @author David Matějka
  */

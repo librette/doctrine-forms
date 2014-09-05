@@ -1,5 +1,5 @@
 <?php
-namespace Librette\Doctrine\Forms;
+namespace Librette\Doctrine\Forms\Mapper;
 
 /**
  * @author David Matejka

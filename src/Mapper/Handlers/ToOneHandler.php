@@ -1,9 +1,9 @@
 <?php
-namespace Librette\Doctrine\Forms\Handlers;
+namespace Librette\Doctrine\Forms\Mapper\Handlers;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Librette\Doctrine\Forms\IHandler;
-use Librette\Doctrine\Forms\Mapper;
+use Librette\Doctrine\Forms\Mapper\IHandler;
+use Librette\Doctrine\Forms\Mapper\Mapper;
 use Librette\Doctrine\WrappedEntity;
 use Nette\ComponentModel\Component;
 use Nette\Forms\Container;

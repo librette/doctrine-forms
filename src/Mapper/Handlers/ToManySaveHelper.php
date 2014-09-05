@@ -1,11 +1,11 @@
 <?php
-namespace Librette\Doctrine\Forms\Handlers;
+namespace Librette\Doctrine\Forms\Mapper\Handlers;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Librette\Doctrine\Forms\Mapper;
+use Librette\Doctrine\Forms\Mapper\Mapper;
 use Librette\Doctrine\Forms\UnexpectedValueException;
 use Librette\Doctrine\WrappedEntity;
 use Nette\ComponentModel\Component;
@@ -26,7 +26,7 @@ class ToManySaveHelper extends Object
 	/** @var \Librette\Doctrine\WrappedEntity */
 	protected $wrappedEntity;
 
-	/** @var \Librette\Doctrine\Forms\Mapper */
+	/** @var \Librette\Doctrine\Forms\Mapper\Mapper */
 	protected $mapper;
 
 	/** @var Container|MultiChoiceControl */

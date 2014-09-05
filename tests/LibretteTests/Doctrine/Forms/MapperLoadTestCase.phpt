@@ -3,7 +3,7 @@ namespace LibretteTests\Doctrine\Forms;
 
 use Kdyby\Replicator\Container;
 use Librette\Doctrine\Forms\FormFactory;
-use Librette\Doctrine\Forms\Mapper;
+use Librette\Doctrine\Forms\Mapper\Mapper;
 use Librette\Doctrine\WrappedEntity;
 use Nette;
 use Tester\Assert;
@@ -43,10 +43,10 @@ class MapperLoadTestCase extends ORMTestCase
 	public function testArrayLoad()
 	{
 		$entity = new CmsArticle();
-		$entity->metadata = array(
+		$entity->metadata = [
 			'foo'   => 'bar',
 			'lorem' => 'ipsum',
-		);
+		];
 		$form = $this->createForm($entity);
 		$metadataContainer = $form->addContainer('metadata');
 		$metadataContainer->addText('foo');
@@ -82,7 +82,7 @@ class MapperLoadTestCase extends ORMTestCase
 		$article->user = $user;
 
 		$form = $this->createForm($article);
-		$form->addSelect('user', 'User', array(1 => 'John', 2 => 'Doe'));
+		$form->addSelect('user', 'User', [1 => 'John', 2 => 'Doe']);
 		$form->setParent(new PresenterMock());
 
 		Assert::same(2, $form['user']->value);
@@ -92,9 +92,9 @@ class MapperLoadTestCase extends ORMTestCase
 
 	public function testCheckboxListLoad()
 	{
-		$groupNames = array(1 => 'foo', 'bar', 'lorem', 'ipsum');
+		$groupNames = [1 => 'foo', 'bar', 'lorem', 'ipsum'];
 
-		$groups = array();
+		$groups = [];
 		foreach ($groupNames as $i => $groupName) {
 			$groups[$i] = $group = new CmsGroup($groupName);
 			$group->id = $i;
@@ -108,15 +108,15 @@ class MapperLoadTestCase extends ORMTestCase
 		$checkboxList = $form->addCheckboxList('groups', 'Groups', $groupNames);
 		$form->setParent(new PresenterMock());
 
-		Assert::same(array(1, 3), $checkboxList->getValue());
+		Assert::same([1, 3], $checkboxList->getValue());
 	}
 
 
 	public function testCheckboxContainerLoad()
 	{
-		$groupNames = array(1 => 'foo', 'bar', 'lorem', 'ipsum');
+		$groupNames = [1 => 'foo', 'bar', 'lorem', 'ipsum'];
 
-		$groups = array();
+		$groups = [];
 		foreach ($groupNames as $i => $groupName) {
 			$groups[$i] = $group = new CmsGroup($groupName);
 			$group->id = $i;
@@ -132,15 +132,15 @@ class MapperLoadTestCase extends ORMTestCase
 		}
 		$form->setParent(new PresenterMock());
 
-		Assert::same(array(1, 3), array_keys(array_filter($groupsContainer->getValues(TRUE))));
+		Assert::same([1, 3], array_keys(array_filter($groupsContainer->getValues(TRUE))));
 	}
 
 
 	public function testToManyLoadWithoutReplicator()
 	{
 		$group = new CmsGroup('My group');
-		$userNames = array(1 => 'John Doe', 'Jim Smith', 'Joe Black');
-		$users = array();
+		$userNames = [1 => 'John Doe', 'Jim Smith', 'Joe Black'];
+		$users = [];
 		foreach ($userNames as $i => $username) {
 			$users[] = $user = new CmsUser($username);
 			$user->id = $i;
@@ -164,8 +164,8 @@ class MapperLoadTestCase extends ORMTestCase
 	public function testToManyLoadWithReplicator()
 	{
 		$group = new CmsGroup('My group');
-		$userNames = array(1 => 'John Doe', 'Jim Smith', 'Joe Black');
-		$users = array();
+		$userNames = [1 => 'John Doe', 'Jim Smith', 'Joe Black'];
+		$users = [];
 		foreach ($userNames as $i => $username) {
 			$users[] = $user = new CmsUser($username);
 			$user->id = $i;
@@ -186,8 +186,8 @@ class MapperLoadTestCase extends ORMTestCase
 	public function testToManyLoadWithReplicatorAndNoId()
 	{
 		$group = new CmsGroup('My group');
-		$userNames = array('John Doe', 'Jim Smith', 'Joe Black');
-		$users = array();
+		$userNames = ['John Doe', 'Jim Smith', 'Joe Black'];
+		$users = [];
 		foreach ($userNames as $username) {
 			$users[] = $user = new CmsUser($username);
 			$group->users->add($user);
@@ -227,7 +227,7 @@ class MapperLoadTestCase extends ORMTestCase
 	{
 		$group = new CmsGroup('My group');
 
-		$form = $this->createForm($group, array('something', 'group'));
+		$form = $this->createForm($group, ['something', 'group']);
 		$groupContainer = $form->addContainer('something')->addContainer('group');
 		$groupContainer->addText('name', 'Name');
 		$form->setParent(new PresenterMock());

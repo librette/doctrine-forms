@@ -95,7 +95,7 @@ class ValidationTestCase extends ORMTestCase
 		Assert::same('Please select at least two groups.', reset($errors));
 		$form['groups']->setValue([$groups[0]->id, $groups[1]->id]);
 		$form->validate();
-		$form->getMapper()->setExecutionStrategy(new Librette\Doctrine\Forms\PostponedExecution()); //clean state
+		$form->getMapper()->setExecutionStrategy(new Librette\Doctrine\Forms\Mapper\PostponedExecution()); //clean state
 		$form->getMapper()->save($form);
 		Assert::count(2, $user->groups);
 		Assert::count(0, $form['groups']->getErrors());

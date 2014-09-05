@@ -1,6 +1,7 @@
 <?php
 namespace Librette\Doctrine\Forms;
 
+use Librette\Doctrine\Forms\Mapper\Mapper;
 use Librette\Forms;
 use Nette;
 
