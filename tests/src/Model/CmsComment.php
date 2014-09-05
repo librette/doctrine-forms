@@ -2,13 +2,14 @@
 namespace LibretteTests\Doctrine\Forms\Model;
 
 use Doctrine\ORM\Mapping as ORM;
+use Kdyby\Doctrine\Entities\BaseEntity;
 
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="cms_comments")
  */
-class CmsComment
+class CmsComment extends BaseEntity
 {
 
 	/**

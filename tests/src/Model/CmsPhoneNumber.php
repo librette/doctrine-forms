@@ -2,13 +2,14 @@
 namespace LibretteTests\Doctrine\Forms\Model;
 
 use Doctrine\ORM\Mapping as ORM;
+use Kdyby\Doctrine\Entities\BaseEntity;
 
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="cms_phonenumbers")
  */
-class CmsPhoneNumber
+class CmsPhoneNumber extends BaseEntity
 {
 
 	/**

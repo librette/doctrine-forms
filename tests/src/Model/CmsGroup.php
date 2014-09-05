@@ -3,6 +3,7 @@ namespace LibretteTests\Doctrine\Forms\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Kdyby\Doctrine\Entities\BaseEntity;
 
 
 /**
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="cms_groups")
  */
-class CmsGroup
+class CmsGroup extends BaseEntity
 {
 
 	/**
