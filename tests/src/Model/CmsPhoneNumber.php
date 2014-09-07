@@ -13,7 +13,8 @@ class CmsPhoneNumber extends BaseEntity
 {
 
 	/**
-	 * @ORM\Id @ORM\Column(length=50)
+	 * @ORM\Id
+	 * @ORM\Column(length=50)
 	 */
 	public $phoneNumber;
 
