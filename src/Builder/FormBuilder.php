@@ -50,4 +50,5 @@ class FormBuilder extends ContainerBuilder
 	{
 		return $this->component;
 	}
+
 }
