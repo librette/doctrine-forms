@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Librette\Doctrine\Forms\Builder\Handlers\ChainHandler;
 use Librette\Doctrine\Forms\InvalidArgumentException;
 use Nette\Forms\Container;
+use Nette\Forms\Controls\SubmitButton;
 
 /**
  * @author David Matejka
@@ -44,6 +45,15 @@ class ContainerBuilder extends BaseBuilder implements \ArrayAccess
 		$this[$name] = $builder;
 
 		return $builder;
+	}
+
+
+	/**
+	 * @param string
+	 */
+	public function addSubmit($name)
+	{
+		return $this->component[$name] = new SubmitButton($this->configuration->getLabelingStrategy()->getButtonLabel($name));
 	}
 
 
