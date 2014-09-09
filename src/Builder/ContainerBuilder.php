@@ -155,9 +155,8 @@ class ContainerBuilder extends BaseBuilder implements \ArrayAccess
 		if (!$builder instanceof IBuilder) {
 			throw new InvalidArgumentException("Value must be an instance of Librette\\Doctrine\\Forms\\IBuilder");
 		}
+		$builder->attach($this, $name);
 		$this->component[$name] = $builder->getComponent();
-		$builder->setParent($this);
-		$builder->setName($name);
 		$this->builders[$name] = $builder;
 	}
 

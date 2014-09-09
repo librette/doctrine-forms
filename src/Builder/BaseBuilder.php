@@ -1,6 +1,7 @@
 <?php
 namespace Librette\Doctrine\Forms\Builder;
 
+use Librette\Doctrine\Forms\InvalidStateException;
 use Nette\ComponentModel\IComponent;
 use Nette\Object;
 
@@ -26,21 +27,26 @@ abstract class BaseBuilder extends Object implements IBuilder
 	}
 
 
-	public function setParent(IBuilder $parent)
+	public function attach(IBuilder $parent, $name)
 	{
+		if ($this->parent) {
+			throw new InvalidStateException("Builder {$this->name} already has a parent.");
+		}
 		$this->parent = $parent;
+		$this->name = $name;
+		$this->attached();
+	}
+
+
+	protected function attached()
+	{
+
 	}
 
 
 	public function getParent()
 	{
 		return $this->parent;
-	}
-
-
-	public function setName($name)
-	{
-		$this->name = $name;
 	}
 
 

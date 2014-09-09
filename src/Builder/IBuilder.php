@@ -17,22 +17,17 @@ interface IBuilder
 
 	/**
 	 * @param IBuilder
+	 * @param string
 	 * @return void
+	 * @internal
 	 */
-	public function setParent(IBuilder $builder);
+	public function attach(IBuilder $builder, $name);
 
 
 	/**
 	 * @return IBuilder
 	 */
 	public function getParent();
-
-
-	/**
-	 * @param string
-	 * @return void
-	 */
-	public function setName($name);
 
 
 	/**
