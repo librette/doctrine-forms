@@ -23,3 +23,8 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
 {
 
 }
+
+class InvalidStateException extends \RuntimeException implements Exception
+{
+
+}
