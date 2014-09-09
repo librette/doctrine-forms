@@ -2,8 +2,11 @@
 namespace Librette\Doctrine\Forms\Builder;
 
 use Kdyby\Doctrine\EntityManager;
+use Librette\Doctrine\Forms\InvalidArgumentException;
+use Librette\Doctrine\Forms\InvalidStateException;
 use Librette\Doctrine\Forms\MapperFactory;
 use Librette\Forms\IFormFactory;
+use Librette\Forms\IFormWithMapper;
 use Nette\Object;
 
 /**
@@ -42,10 +45,22 @@ class FormBuilderFactory extends Object
 	/**
 	 * @param object|string
 	 */
-	public function create($entity)
+	public function create($entity, $createMapper = TRUE)
 	{
 		$className = is_string($entity) ? $entity : get_class($entity);
 
-		return new FormBuilder($this->entityManager->getClassMetadata($className), $this->formFactory->create(), $this->configuration);
+		$builder = new FormBuilder($this->entityManager->getClassMetadata($className), $this->formFactory->create(), $this->configuration);
+		if ($createMapper) {
+			if (!is_object($entity)) {
+				throw new InvalidArgumentException("If you want to create mapper, you have to pass an entity.");
+			}
+			$form = $builder->getForm();
+			if (!$form instanceof IFormWithMapper) {
+				throw new InvalidStateException("Form does not implement \\Librette\\Forms\\IFormWithMapper");
+			}
+			$form->setMapper($this->mapperFactory->create($entity));
+		}
+
+		return $builder;
 	}
 }
