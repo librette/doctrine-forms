@@ -8,6 +8,8 @@ use Librette\Doctrine\Forms\Builder\ControlBuilder;
 use Librette\Doctrine\Forms\Builder\ControlFactory;
 use Librette\Doctrine\Forms\Builder\IHandler;
 use Nette\Forms\Controls\ChoiceControl;
+use Nette\Forms\Controls\SelectBox;
+use Nette\Forms\IControl;
 use Nette\Object;
 
 /**
@@ -15,6 +17,11 @@ use Nette\Object;
  */
 class ManyToOneHandler extends Object implements IHandler
 {
+
+	private static $allowedControls = [
+		'\Nette\Forms\Controls\ChoiceControl',
+		'\Nette\Forms\Controls\HiddenField'
+	];
 
 	/** @var EntityManager */
 	protected $entityManager;
@@ -32,16 +39,67 @@ class ManyToOneHandler extends Object implements IHandler
 			return NULL;
 		}
 		$options += ['control' => ControlFactory::SELECT_BOX, 'fill' => TRUE];
-		$control = ControlFactory::create($options['control'], ['\Nette\Forms\Controls\ChoiceControl', '\Nette\Forms\Controls\HiddenField'], ControlFactory::SELECT_BOX);
-
-		if ($options['fill'] === TRUE) {
-			$dao = $this->entityManager->getDao($mapping['targetEntity']);
-			$items = ChoiceHelpers::getPairs($dao, $options);
-			/** @var ChoiceControl $control */
-			$control->setItems($items);
+		$control = ControlFactory::create($options['control'], self::$allowedControls, ControlFactory::SELECT_BOX);
+		if (empty($options['caption'])) {
+			$control->caption = $configuration->getLabelingStrategy()->getControlLabel($name, $classMetadata);
+		} else {
+			$control->caption = $options['caption'];
 		}
+		$this->setPrompt($options, $control, $mapping);
+		$this->fillOptions($options, $control, $mapping);
 
 		return new ControlBuilder($control);
+	}
+
+
+	/**
+	 * @param array
+	 * @param IControl
+	 * @param array
+	 * @return void
+	 */
+	protected function setPrompt(array $options, $control, $mapping)
+	{
+		if (!$control instanceof SelectBox) {
+			return;
+		}
+		if (!array_key_exists('prompt', $options)) {
+			$joinColumn = reset($mapping['joinColumns']);
+			$options['prompt'] = isset($joinColumn['nullable']) && $joinColumn['nullable'] ? '---' : NULL;
+		}
+		if (isset($options['prompt'])) {
+			$control->setPrompt($options['prompt']);
+		}
+	}
+
+
+	/**
+	 * @param array
+	 * @param IControl
+	 * @param array
+	 */
+	protected function fillOptions(array $options, $control, $mapping)
+	{
+		if ($options['fill'] !== TRUE) {
+			return;
+		}
+		$items = $this->getItems($options, $mapping);
+		/** @var ChoiceControl $control */
+		$control->setItems($items);
+	}
+
+
+	/**
+	 * @param array $options
+	 * @param $mapping
+	 * @return array
+	 */
+	protected function getItems(array $options, $mapping)
+	{
+		$dao = $this->entityManager->getDao($mapping['targetEntity']);
+		$items = ChoiceHelpers::getPairs($dao, $options);
+
+		return $items;
 	}
 
 }
