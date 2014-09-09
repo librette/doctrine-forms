@@ -29,6 +29,7 @@ class ReplicatorBuilder extends ContainerBuilder
 		$builder = $this->createBuilder($name, $options);
 		$this->containerPrototype[$name] = $builder->getComponent();
 
+		//todo add builder to $this->builders?
 		return $builder;
 	}
 
@@ -36,32 +37,59 @@ class ReplicatorBuilder extends ContainerBuilder
 	public function addAddButton(array $options = [])
 	{
 		$options += ['name'       => 'add',
-					 'caption'    => 'Add',
+					 'caption'    => $this->configuration->getLabelingStrategy()->getButtonLabel('add'),
 					 'allowEmpty' => NULL,
-					 'callback'   => NULL];
+					 'callback'   => function () {
+					 },
+					 'multiplier' => FALSE,
+		];
+		if ($options['multiplier'] === TRUE) {
+			$options['callback'] = $this->addMultiplier($options['callback']);
+		}
+
 		$button = $this->addButton(function () use ($options) {
 			return $this->getComponent()
 						->addSubmit($options['name'], $options['caption'])
+						->setValidationScope(FALSE)
 						->addCreateOnClick($options['allowEmpty'], $options['callback']);
 
 		});
 
+		//todo add builder to $this->builders?
 		return new ControlBuilder($button);
+	}
+
+
+	private function addMultiplier($callback)
+	{
+		$this->getComponent()
+			 ->addText('count')
+			 ->setDefaultValue(1);
+
+		return function (Replicator $replicator, Container $container) use ($callback) {
+			$callback($replicator, $container);
+			for ($i = 1; $i < $replicator['count']->value; $i++) {
+				$container = $replicator->createOne();
+				$callback($replicator, $container);
+			}
+		};
 	}
 
 
 	public function addRemoveButton(array $options = [])
 	{
 		$options += ['name'     => 'remove',
-					 'caption'  => 'Remove',
+					 'caption'  => $this->configuration->getLabelingStrategy()->getButtonLabel('remove'),
 					 'callback' => NULL,
 		];
 		$button = $this->addButton(function () use ($options) {
 			return $this->getContainerPrototype()
 						->addSubmit($options['name'], $options['caption'])
+						->setValidationScope(FALSE)
 						->addRemoveOnClick($options['callback']);
 		});
 
+		//todo add builder to $this->builders?
 		return new ControlBuilder($button);
 	}
 

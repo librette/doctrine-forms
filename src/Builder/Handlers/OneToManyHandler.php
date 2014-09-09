@@ -35,6 +35,7 @@ class OneToManyHandler extends Object implements IHandler
 		if (!$mapping = MetadataHelpers::getAssociationMapping($classMetadata, $name, ClassMetadata::ONE_TO_MANY)) {
 			return NULL;
 		}
+		$options += ['createDefault' => 0];
 		$dao = $this->entityManager->getDao($mapping['targetEntity']);
 		$containerPrototype = new Container();
 		$replicator = new Replicator(function (Container $container) use ($containerPrototype) {
@@ -42,7 +43,7 @@ class OneToManyHandler extends Object implements IHandler
 			foreach ($containerPrototype->getComponents() as $component) {
 				$container[$component->getName()] = clone $component;
 			}
-		});
+		}, $options['createDefault']);
 
 		return new ReplicatorBuilder($dao->getClassMetadata(), $replicator, $configuration, $containerPrototype);
 	}
