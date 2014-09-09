@@ -10,7 +10,7 @@ use Nette\Object;
 abstract class BaseBuilder extends Object implements IBuilder
 {
 
-	/** @var ContainerBuilder */
+	/** @var IBuilder */
 	protected $parent;
 
 	/** @var IComponent */
