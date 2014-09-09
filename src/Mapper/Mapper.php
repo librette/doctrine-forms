@@ -3,6 +3,7 @@ namespace Librette\Doctrine\Forms\Mapper;
 
 use Doctrine\ORM;
 use Librette\Doctrine\EntityWrapper;
+use Librette\Doctrine\Forms\Mapper\Handlers\ChainHandler;
 use Librette\Doctrine\Forms\ValidationException;
 use Librette\Doctrine\WrappedEntity;
 use Librette\Forms\IMapper;
@@ -45,8 +46,8 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	/** @var ORM\EntityManager */
 	protected $entityManager;
 
-	/** @var IHandler[] */
-	protected $handlers = [];
+	/** @var ChainHandler */
+	protected $handler;
 
 	/** @var \Librette\Doctrine\EntityWrapper */
 	protected $entityWrapper;
@@ -72,18 +73,27 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	 * @param array|null|string
 	 * @param ORM\EntityManager
 	 * @param \Librette\Doctrine\EntityWrapper
+	 * @param IHandler
 	 * @param ValidatorInterface
 	 */
-	public function __construct($entity, $offset = NULL, ORM\EntityManager $entityManager, EntityWrapper $entityWrapper, ValidatorInterface $validator = NULL)
+	public function __construct($entity, $offset = NULL, ORM\EntityManager $entityManager, EntityWrapper $entityWrapper, IHandler $handler = NULL, ValidatorInterface $validator = NULL)
 	{
 		$this->entity = $entity;
 		$this->entityManager = $entityManager;
 		$this->entityWrapper = $entityWrapper;
 		$this->validator = $validator;
 		$this->setOffset($offset);
-		$this->handlers[] = new Handlers\ToManyHandler();
-		$this->handlers[] = new Handlers\ToOneHandler();
-		$this->handlers[] = new Handlers\FieldHandler();
+		if ($handler === NULL) { //BC
+			$handlers = [
+				new Handlers\ToManyHandler(),
+				new Handlers\ToOneHandler(),
+				new Handlers\FieldHandler(),
+			];
+		} else {
+			$handlers = [$handler];
+		}
+		$this->handler = new ChainHandler($handlers);
+
 	}
 
 
@@ -123,7 +133,7 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	 */
 	public function addHandler(IHandler $handler)
 	{
-		array_unshift($this->handlers, $handler);
+		$this->handler->add($handler);
 	}
 
 
@@ -175,7 +185,7 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	{
 		$this->form = $form;
 		$originalExecutionStrategy = $this->executionStrategy;
-		$recover = function() use($originalExecutionStrategy) {
+		$recover = function () use ($originalExecutionStrategy) {
 			$this->executionStrategy = $originalExecutionStrategy;
 			$this->validating = FALSE;
 		};
@@ -184,7 +194,7 @@ class Mapper extends Object implements IMapper, IValidationMapper
 		try {
 			$this->saveValues($this->applyOffset($form->getComponents(), $this->offset), $this->entity);
 			$recover();
-		} catch(\Exception $e) {
+		} catch (\Exception $e) {
 			$recover();
 		}
 	}
@@ -197,6 +207,7 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	{
 		return $this->validating;
 	}
+
 
 	/**
 	 * @param Form
@@ -288,24 +299,26 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	 */
 	protected function shouldSkip($component)
 	{
-		if($component instanceof Controls\Button) {
+		if ($component instanceof Controls\Button) {
 			return TRUE;
 		}
-		if($this->isValidating() && ($submittedBy = $this->form->submittedBy) && $submittedBy instanceof ISubmitterControl) {
+		if ($this->isValidating() && ($submittedBy = $this->form->submittedBy) && $submittedBy instanceof ISubmitterControl) {
 			$controls = $submittedBy->getValidationScope();
-			if($controls === NULL) {
+			if ($controls === NULL) {
 				return FALSE;
 			}
-			foreach($controls as $control) {
-				if($control === $component) {
+			foreach ($controls as $control) {
+				if ($control === $component) {
 					return FALSE;
 				}
-				if($control instanceof Container && array_search($component, $control->getComponents(TRUE), TRUE)) {
+				if ($control instanceof Container && array_search($component, $control->getComponents(TRUE), TRUE)) {
 					return FALSE;
 				}
 			}
+
 			return TRUE;
 		}
+
 		return FALSE;
 	}
 
@@ -322,26 +335,7 @@ class Mapper extends Object implements IMapper, IValidationMapper
 			if ($this->shouldSkip($component)) {
 				continue;
 			}
-			$this->executeHandlers($operation, $wrappedEntity, $component);
-		}
-	}
-
-
-	/**
-	 * @param string load or save
-	 * @param WrappedEntity
-	 * @param IComponent
-	 */
-	protected function executeHandlers($operation, WrappedEntity $wrappedEntity, $component)
-	{
-		foreach ($this->handlers as $handler) {
-			try {
-				if ($handler->$operation($wrappedEntity, $component, $this)) {
-					return;
-				}
-			} catch (ValidationException $e) {
-				return;
-			}
+			$this->handler->$operation($wrappedEntity, $component, $this);
 		}
 	}
 
