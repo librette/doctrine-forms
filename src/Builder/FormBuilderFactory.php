@@ -2,7 +2,6 @@
 namespace Librette\Doctrine\Forms\Builder;
 
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
-use Kdyby\Doctrine\EntityManager;
 use Librette\Doctrine\Forms\InvalidArgumentException;
 use Librette\Doctrine\Forms\InvalidStateException;
 use Librette\Doctrine\Forms\MapperFactory;

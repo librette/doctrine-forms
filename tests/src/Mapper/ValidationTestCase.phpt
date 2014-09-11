@@ -60,7 +60,7 @@ class ValidationTestCase extends ORMTestCase
 		$article = new CmsArticle();
 		$form = $this->createForm($article);
 		$form->addSelect('user', 'User', [1 => 'Foo', 2 => 'Bar'])
-			 ->setPrompt('---');
+		     ->setPrompt('---');
 		$form->validate();
 		$form->getMapper()->save($form);
 		$errors = $form['user']->getErrors();
@@ -76,7 +76,7 @@ class ValidationTestCase extends ORMTestCase
 		$user->name = 'John';
 		$em->persist($user);
 		$groups = [];
-		foreach(['XX', 'YY', 'ZZ'] as $groupname) {
+		foreach (['XX', 'YY', 'ZZ'] as $groupname) {
 			$groups[] = $group = new CmsGroup();
 			$group->name = $groupname;
 			$em->persist($group);
@@ -84,7 +84,7 @@ class ValidationTestCase extends ORMTestCase
 		}
 		$em->flush();
 		$choices = [];
-		foreach($groups as $group) {
+		foreach ($groups as $group) {
 			$choices[$group->id] = $group->name;
 		}
 		$form = $this->createForm($user);

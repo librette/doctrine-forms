@@ -69,6 +69,7 @@ class ManyToOneTestCase extends ORMTestCase
 		Tester\Assert::same($component->getItems(), $items);
 	}
 
+
 	public function testRadioList()
 	{
 		$builder = $this->doHandle('user', ['control' => Librette\Doctrine\Forms\Builder\ControlFactory::RADIO_LIST]);
@@ -77,6 +78,7 @@ class ManyToOneTestCase extends ORMTestCase
 		Tester\Assert::type('\Nette\Forms\Controls\RadioList', $component);
 		Tester\Assert::count(4, $component->getItems());
 	}
+
 
 	public function testNotFill()
 	{

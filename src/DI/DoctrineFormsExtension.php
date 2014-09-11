@@ -57,12 +57,12 @@ class DoctrineFormsExtension extends CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addDefinition($this->prefix('formFactory'))
-				->setClass('Librette\Doctrine\Forms\FormFactory');
+		        ->setClass('Librette\Doctrine\Forms\FormFactory');
 		$builder->addDefinition($this->prefix('mapperFactory'))
-				->setImplement('\Librette\Doctrine\Forms\MapperFactory')
-				->setArguments([new PhpLiteral('$entity'), new PhpLiteral('$offset')]);
+		        ->setImplement('\Librette\Doctrine\Forms\MapperFactory')
+		        ->setArguments([new PhpLiteral('$entity'), new PhpLiteral('$offset')]);
 		$chain = $builder->addDefinition($this->prefix('mapperChainHandler'))
-						 ->setClass('\Librette\Doctrine\Forms\Mapper\Handlers\ChainHandler');
+		                 ->setClass('\Librette\Doctrine\Forms\Mapper\Handlers\ChainHandler');
 
 		foreach (array_merge($config['handlers'], $this->defaultMapperHandlers) as $i => $handler) {
 			Compiler::parseService($def = $builder->addDefinition($this->prefix("mapperHandler$i")), $handler);
@@ -79,10 +79,10 @@ class DoctrineFormsExtension extends CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addDefinition($this->prefix('formBuilderFactory'))
-				->setClass('Librette\Doctrine\Forms\Builder\FormBuilderFactory');
+		        ->setClass('Librette\Doctrine\Forms\Builder\FormBuilderFactory');
 
 		$chain = $builder->addDefinition($this->prefix('builderChainHandler'))
-						 ->setClass('\Librette\Doctrine\Forms\Builder\Handlers\ChainHandler');
+		                 ->setClass('\Librette\Doctrine\Forms\Builder\Handlers\ChainHandler');
 
 		foreach (array_merge($config['handlers'], $this->defaultBuilderHandlers) as $i => $handler) {
 			Compiler::parseService($def = $builder->addDefinition($this->prefix("builderHandler$i")), $handler);
@@ -90,7 +90,7 @@ class DoctrineFormsExtension extends CompilerExtension
 			$chain->addSetup('add', [$def, FALSE]);
 		}
 		$builder->addDefinition($this->prefix('builderConfiguration'))
-				->setClass('\Librette\Doctrine\Forms\Builder\Configuration');
+		        ->setClass('\Librette\Doctrine\Forms\Builder\Configuration');
 	}
 
 

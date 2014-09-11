@@ -160,7 +160,7 @@ class MapperLoadTestCase extends ORMTestCase
 			$userContainer->addText('name', 'Name');
 		}
 		$form->setParent(new PresenterMock());
-		foreach($userNames as $i =>$username) {
+		foreach ($userNames as $i => $username) {
 			Assert::same($username, $form['users'][$i]['name']->value);
 		}
 	}
@@ -178,7 +178,7 @@ class MapperLoadTestCase extends ORMTestCase
 		}
 
 		$form = $this->createForm($group);
-		$replicator = new Container(function(Nette\Forms\Container $container) {
+		$replicator = new Container(function (Nette\Forms\Container $container) {
 			$container->addText('name', 'Name');
 		});
 		$form['users'] = $replicator;
@@ -187,6 +187,7 @@ class MapperLoadTestCase extends ORMTestCase
 			Assert::same($username, $form['users'][$i]['name']->value);
 		}
 	}
+
 
 	public function testToManyLoadWithReplicatorAndNoId()
 	{
@@ -218,8 +219,9 @@ class MapperLoadTestCase extends ORMTestCase
 		$form->addText('name');
 		/** @var Mapper $mapper */
 		$mapper = $form->getMapper();
-		$mapper->addLoadHandler(function(WrappedEntity $wrappedEntity, Nette\Forms\Controls\BaseControl $baseControl) {
+		$mapper->addLoadHandler(function (WrappedEntity $wrappedEntity, Nette\Forms\Controls\BaseControl $baseControl) {
 			$baseControl->setDefaultValue('My value');
+
 			return TRUE;
 		});
 		$form->setParent(new PresenterMock());
@@ -240,6 +242,7 @@ class MapperLoadTestCase extends ORMTestCase
 		Assert::same('My group', $form['something']['group']['name']->value);
 
 	}
+
 
 	private function createForm($entity, $offset = NULL)
 	{

@@ -5,7 +5,6 @@ use Doctrine\ORM;
 use Librette\Doctrine\EntityWrapper;
 use Librette\Doctrine\Forms\Mapper\Handlers\ChainHandler;
 use Librette\Doctrine\Forms\ValidationException;
-use Librette\Doctrine\WrappedEntity;
 use Librette\Forms\IMapper;
 use Librette\Forms\IValidationMapper;
 use Nette\ComponentModel\Container;

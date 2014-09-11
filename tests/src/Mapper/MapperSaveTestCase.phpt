@@ -31,7 +31,7 @@ class MapperSaveTestCase extends ORMTestCase
 
 		$form = $this->createForm($user);
 		$form->addText('username', 'Username')
-			 ->setValue('John');
+		     ->setValue('John');
 		$form->getMapper()->save($form);
 
 		Assert::same('John', $user->username);
@@ -46,8 +46,8 @@ class MapperSaveTestCase extends ORMTestCase
 		$form = $this->createForm($article);
 
 		$form->addContainer('metadata')
-			 ->addText('foo', 'Foo')
-			 ->setValue('bar');
+		     ->addText('foo', 'Foo')
+		     ->setValue('bar');
 
 		$form->getMapper()->save($form);
 
@@ -63,7 +63,7 @@ class MapperSaveTestCase extends ORMTestCase
 		$form = $this->createForm($article);
 		$userContainer = $form->addContainer('user');
 		$userContainer->addText('username')
-					  ->setValue('john');
+		              ->setValue('john');
 
 		Assert::null($article->user);
 		$form->getMapper()->save($form);
@@ -90,7 +90,7 @@ class MapperSaveTestCase extends ORMTestCase
 		$userContainer = $form->addContainer('user');
 		$userContainer->addHidden('id')->setValue($user->id);
 		$userContainer->addText('username')
-					  ->setValue('jack');
+		              ->setValue('jack');
 		Assert::same('john', $user->username);
 		Assert::null($article->user);
 		$form->getMapper()->save($form);
@@ -113,7 +113,7 @@ class MapperSaveTestCase extends ORMTestCase
 
 		$form = $this->createForm($article);
 		$form->addSelect('user', 'User', [$user->id => $user->id])
-			 ->setValue($user->id);
+		     ->setValue($user->id);
 
 		Assert::null($article->user);
 		$form->getMapper()->save($form);
@@ -142,7 +142,7 @@ class MapperSaveTestCase extends ORMTestCase
 		$form = $this->createForm($user);
 
 		$form->addCheckboxList('groups', 'Groups', $groupNames)
-			 ->setValue([2, 3]);
+		     ->setValue([2, 3]);
 		$form->getMapper()->save($form);
 
 		Assert::true($user->groups instanceof Collection);
@@ -230,7 +230,7 @@ class MapperSaveTestCase extends ORMTestCase
 		Assert::same(2, $article->attributes->count());
 		$attributesInArticle = [];
 		$values = [];
-		foreach($article->attributes as $attribute) {
+		foreach ($article->attributes as $attribute) {
 			$attributesInArticle[] = $attribute->attribute;
 			$values[] = $attribute->value;
 		}

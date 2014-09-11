@@ -37,11 +37,11 @@ class ReplicatorBuilder extends ContainerBuilder
 	public function addAddButton(array $options = [])
 	{
 		$options += ['name'       => 'add',
-					 'caption'    => $this->configuration->getLabelingStrategy()->getButtonLabel('add'),
-					 'allowEmpty' => NULL,
-					 'callback'   => function () {
-					 },
-					 'multiplier' => FALSE,
+		             'caption'    => $this->configuration->getLabelingStrategy()->getButtonLabel('add'),
+		             'allowEmpty' => NULL,
+		             'callback'   => function () {
+		             },
+		             'multiplier' => FALSE,
 		];
 		if ($options['multiplier'] === TRUE) {
 			$options['callback'] = $this->addMultiplier($options['callback']);
@@ -49,9 +49,9 @@ class ReplicatorBuilder extends ContainerBuilder
 
 		$button = $this->addButton(function () use ($options) {
 			return $this->getComponent()
-						->addSubmit($options['name'], $options['caption'])
-						->setValidationScope(FALSE)
-						->addCreateOnClick($options['allowEmpty'], $options['callback']);
+			            ->addSubmit($options['name'], $options['caption'])
+			            ->setValidationScope(FALSE)
+			            ->addCreateOnClick($options['allowEmpty'], $options['callback']);
 
 		});
 
@@ -63,8 +63,8 @@ class ReplicatorBuilder extends ContainerBuilder
 	private function addMultiplier($callback)
 	{
 		$this->getComponent()
-			 ->addText('count')
-			 ->setDefaultValue(1);
+		     ->addText('count')
+		     ->setDefaultValue(1);
 
 		return function (Replicator $replicator, Container $container) use ($callback) {
 			$callback($replicator, $container);
@@ -79,14 +79,14 @@ class ReplicatorBuilder extends ContainerBuilder
 	public function addRemoveButton(array $options = [])
 	{
 		$options += ['name'     => 'remove',
-					 'caption'  => $this->configuration->getLabelingStrategy()->getButtonLabel('remove'),
-					 'callback' => NULL,
+		             'caption'  => $this->configuration->getLabelingStrategy()->getButtonLabel('remove'),
+		             'callback' => NULL,
 		];
 		$button = $this->addButton(function () use ($options) {
 			return $this->getContainerPrototype()
-						->addSubmit($options['name'], $options['caption'])
-						->setValidationScope(FALSE)
-						->addRemoveOnClick($options['callback']);
+			            ->addSubmit($options['name'], $options['caption'])
+			            ->setValidationScope(FALSE)
+			            ->addRemoveOnClick($options['callback']);
 		});
 
 		//todo add builder to $this->builders?

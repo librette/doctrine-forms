@@ -1,7 +1,6 @@
 <?php
 namespace LibretteTests\Doctrine\Forms\Model;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Kdyby\Doctrine\Entities\BaseEntity;
 use Librette\Doctrine\Annotations as Librette;
