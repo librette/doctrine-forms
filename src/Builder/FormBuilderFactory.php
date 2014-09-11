@@ -1,6 +1,7 @@
 <?php
 namespace Librette\Doctrine\Forms\Builder;
 
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Kdyby\Doctrine\EntityManager;
 use Librette\Doctrine\Forms\InvalidArgumentException;
 use Librette\Doctrine\Forms\InvalidStateException;
@@ -17,8 +18,8 @@ class FormBuilderFactory extends Object
 
 	const AUTO = NULL;
 
-	/** @var EntityManager */
-	protected $entityManager;
+	/** @var ClassMetadataFactory */
+	protected $classMetadataFactory;
 
 	/** @var IFormFactory */
 	protected $formFactory;
@@ -31,14 +32,14 @@ class FormBuilderFactory extends Object
 
 
 	/**
-	 * @param EntityManager
+	 * @param ClassMetadataFactory
 	 * @param IFormFactory
 	 * @param Configuration
 	 * @param MapperFactory
 	 */
-	public function __construct(EntityManager $entityManager, IFormFactory $formFactory, Configuration $configuration, MapperFactory $mapperFactory = NULL)
+	public function __construct(ClassMetadataFactory $classMetadataFactory, IFormFactory $formFactory, Configuration $configuration, MapperFactory $mapperFactory = NULL)
 	{
-		$this->entityManager = $entityManager;
+		$this->classMetadataFactory = $classMetadataFactory;
 		$this->formFactory = $formFactory;
 		$this->configuration = $configuration;
 		$this->mapperFactory = $mapperFactory;
@@ -53,7 +54,7 @@ class FormBuilderFactory extends Object
 	{
 		$className = is_string($entity) ? $entity : get_class($entity);
 
-		$builder = new FormBuilder($this->entityManager->getClassMetadata($className), $this->formFactory->create(), $this->configuration);
+		$builder = new FormBuilder($this->classMetadataFactory->getMetadataFor($className), $this->formFactory->create(), $this->configuration);
 		if ($createMapper === TRUE || ($createMapper === self::AUTO && is_object($entity))) {
 			if (!is_object($entity)) {
 				throw new InvalidArgumentException("If you want to create mapper, you have to pass an entity.");

@@ -23,9 +23,9 @@ class FactoryTestCase extends Tester\TestCase
 
 	public function testMapper()
 	{
-		$em = Mockery::mock('Kdyby\Doctrine\EntityManager')
-		             ->shouldReceive('getClassMetadata')->andReturn(Mockery::mock('\Doctrine\ORM\Mapping\ClassMetadata'))
-		             ->getMock();
+		$metadataFactory = Mockery::mock('\Doctrine\ORM\Mapping\ClassMetadataFactory')
+		                          ->shouldReceive('getMetadataFor')->andReturn(Mockery::mock('\Doctrine\ORM\Mapping\ClassMetadata'))
+		                          ->getMock();
 		$factory = Mockery::mock('Librette\Forms\IFormFactory')
 		                  ->shouldReceive('create')->andReturn(new Librette\Forms\Form())
 		                  ->getMock();
@@ -33,7 +33,7 @@ class FactoryTestCase extends Tester\TestCase
 		                        ->shouldReceive('create')->andReturn(Mockery::mock('Librette\Forms\IMapper'))
 		                        ->getMock();
 
-		$factory = new FormBuilderFactory($em, $factory, new Configuration(new ChainHandler()), $mapperFactory);
+		$factory = new FormBuilderFactory($metadataFactory, $factory, new Configuration(new ChainHandler()), $mapperFactory);
 		$builder = $factory->create('foo');
 		Assert::null($builder->getForm()->getMapper());
 		$builder = $factory->create(new CmsArticle());
