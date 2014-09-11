@@ -21,6 +21,7 @@
 	},
 	"require-dev": {
 		"kdyby/doctrine": "@dev",
+		"mockery/mockery": "~0.9",
 		"nette/tester": "@dev",
 		"kdyby/forms-replicator": "@dev",
 		"kdyby/validator": "@dev",

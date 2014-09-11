@@ -15,6 +15,8 @@ use Nette\Object;
 class FormBuilderFactory extends Object
 {
 
+	const AUTO = NULL;
+
 	/** @var EntityManager */
 	protected $entityManager;
 
@@ -32,8 +34,9 @@ class FormBuilderFactory extends Object
 	 * @param EntityManager
 	 * @param IFormFactory
 	 * @param Configuration
+	 * @param MapperFactory
 	 */
-	public function __construct(EntityManager $entityManager, IFormFactory $formFactory, Configuration $configuration, MapperFactory $mapperFactory)
+	public function __construct(EntityManager $entityManager, IFormFactory $formFactory, Configuration $configuration, MapperFactory $mapperFactory = NULL)
 	{
 		$this->entityManager = $entityManager;
 		$this->formFactory = $formFactory;
@@ -44,15 +47,19 @@ class FormBuilderFactory extends Object
 
 	/**
 	 * @param object|string
+	 * @param bool|null
 	 */
-	public function create($entity, $createMapper = TRUE)
+	public function create($entity, $createMapper = self::AUTO)
 	{
 		$className = is_string($entity) ? $entity : get_class($entity);
 
 		$builder = new FormBuilder($this->entityManager->getClassMetadata($className), $this->formFactory->create(), $this->configuration);
-		if ($createMapper) {
+		if ($createMapper === TRUE || ($createMapper === self::AUTO && is_object($entity))) {
 			if (!is_object($entity)) {
 				throw new InvalidArgumentException("If you want to create mapper, you have to pass an entity.");
+			}
+			if (!$this->mapperFactory) {
+				throw new InvalidStateException("MapperFactory has not been injected.");
 			}
 			$form = $builder->getForm();
 			if (!$form instanceof IFormWithMapper) {
