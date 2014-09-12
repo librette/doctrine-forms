@@ -31,7 +31,7 @@ class DoctrineFormsExtension extends CompilerExtension
 	];
 
 	protected $defaultBuilderHandlers = [
-		'Librette\Doctrine\Forms\Builder\Handlers\OneToManyHandler',
+		'Librette\Doctrine\Forms\Builder\Handlers\OneToOneHandler',
 		'Librette\Doctrine\Forms\Builder\Handlers\FieldHandler',
 		'Librette\Doctrine\Forms\Builder\Handlers\ManyToOneHandler',
 		'Librette\Doctrine\Forms\Builder\Handlers\OneToManyHandler',
