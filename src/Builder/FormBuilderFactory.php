@@ -5,6 +5,7 @@ use Kdyby\Doctrine\EntityManager;
 use Librette\Doctrine\Forms\InvalidArgumentException;
 use Librette\Doctrine\Forms\InvalidStateException;
 use Librette\Doctrine\Forms\MapperFactory;
+use Librette\Doctrine\Forms\UnexpectedValueException;
 use Librette\Forms\IFormFactory;
 use Librette\Forms\IFormWithMapper;
 use Nette\Object;
@@ -20,9 +21,6 @@ class FormBuilderFactory extends Object
 	/** @var EntityManager */
 	protected $entityManager;
 
-	/** @var IFormFactory */
-	protected $formFactory;
-
 	/** @var Configuration */
 	protected $configuration;
 
@@ -32,14 +30,12 @@ class FormBuilderFactory extends Object
 
 	/**
 	 * @param EntityManager
-	 * @param IFormFactory
 	 * @param Configuration
 	 * @param MapperFactory
 	 */
-	public function __construct(EntityManager $entityManager, IFormFactory $formFactory, Configuration $configuration, MapperFactory $mapperFactory = NULL)
+	public function __construct(EntityManager $entityManager, Configuration $configuration, MapperFactory $mapperFactory = NULL)
 	{
 		$this->entityManager = $entityManager;
-		$this->formFactory = $formFactory;
 		$this->configuration = $configuration;
 		$this->mapperFactory = $mapperFactory;
 	}
@@ -52,8 +48,12 @@ class FormBuilderFactory extends Object
 	public function create($entity, $createMapper = self::AUTO)
 	{
 		$className = is_string($entity) ? $entity : get_class($entity);
-
-		$builder = new FormBuilder($this->entityManager->getClassMetadata($className), $this->formFactory->create(), $this->configuration);
+		$classMetadata = $this->entityManager->getClassMetadata($className);
+		/** @var FormBuilder $builder */
+		$builder = $this->configuration->getHandler()->handle(NULL, [], $classMetadata, $this->configuration);
+		if(!$builder instanceof FormBuilder) {
+			throw new UnexpectedValueException("Builder created by root handler must be an instance of FormBuilder");
+		}
 		if ($createMapper === TRUE || ($createMapper === self::AUTO && is_object($entity))) {
 			if (!is_object($entity)) {
 				throw new InvalidArgumentException("If you want to create mapper, you have to pass an entity.");

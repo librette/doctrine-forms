@@ -5,6 +5,7 @@ use Librette;
 use Librette\Doctrine\Forms\Builder\Configuration;
 use Librette\Doctrine\Forms\Builder\FormBuilderFactory;
 use Librette\Doctrine\Forms\Builder\Handlers\ChainHandler;
+use Librette\Doctrine\Forms\Builder\Handlers\RootHandler;
 use LibretteTests\Doctrine\Forms\Model\CmsArticle;
 use Mockery;
 use Nette;
@@ -33,7 +34,7 @@ class FactoryTestCase extends Tester\TestCase
 		                        ->shouldReceive('create')->andReturn(Mockery::mock('Librette\Forms\IMapper'))
 		                        ->getMock();
 
-		$factory = new FormBuilderFactory($em, $factory, new Configuration(new ChainHandler()), $mapperFactory);
+		$factory = new FormBuilderFactory($em, new Configuration(new RootHandler($factory)), $mapperFactory);
 		$builder = $factory->create('foo');
 		Assert::null($builder->getForm()->getMapper());
 		$builder = $factory->create(new CmsArticle());
