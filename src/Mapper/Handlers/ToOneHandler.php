@@ -31,9 +31,10 @@ class ToOneHandler implements IHandler
 			return FALSE;
 		}
 		$subEntity = $wrappedEntity->getValue($component->name);
-		if ($component instanceof Container) {
+		if (!$subEntity) {
+		} elseif ($component instanceof Container) {
 			$mapper->loadValues($component, $subEntity);
-		} elseif ($component instanceof BaseControl && $subEntity) {
+		} elseif ($component instanceof BaseControl) {
 			$wrappedSubEntity = $wrappedEntity->getEntityWrapper()->wrap($subEntity);
 			$component->setDefaultValue($wrappedSubEntity->getSingleIdentifier());
 		}
