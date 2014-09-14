@@ -33,7 +33,7 @@ class ValidationTestCase extends ORMTestCase
 		$form = $this->createForm($user);
 		$form->addText('username');
 		$form->validate();
-		$form->getMapper()->save($form);
+		$form->getMapper()->validate($form);
 		$errors = $form['username']->getErrors();
 		Assert::same('Please fill in your username.', reset($errors));
 	}
@@ -48,7 +48,7 @@ class ValidationTestCase extends ORMTestCase
 		$emailContainer = $form->addContainer('email');
 		$emailContainer->addText('email')->setValue('xxx');
 		$form->validate();
-		$form->getMapper()->save($form);
+		$form->getMapper()->validate($form);
 		$errors = $form['email']['email']->getErrors();
 		Assert::same('This value is not a valid email address.', reset($errors));
 	}
@@ -62,7 +62,7 @@ class ValidationTestCase extends ORMTestCase
 		$form->addSelect('user', 'User', [1 => 'Foo', 2 => 'Bar'])
 		     ->setPrompt('---');
 		$form->validate();
-		$form->getMapper()->save($form);
+		$form->getMapper()->validate($form);
 		$errors = $form['user']->getErrors();
 		Assert::same('Please select a user.', reset($errors));
 	}
@@ -133,7 +133,7 @@ class ValidationTestCase extends ORMTestCase
 		Assert::count(3, $user->groups);
 		$form['groups']->setValues([0 => ['id' => $groups[1]->id, 'name' => 'foo']]);
 		$form->validate();
-		$form->getMapper()->save($form);
+		$form->getMapper()->validate($form);
 		Assert::count(3, $user->groups);
 		$errors = $form->getErrors();
 		Assert::same('Please select at least two groups.', reset($errors));
@@ -164,7 +164,7 @@ class ValidationTestCase extends ORMTestCase
 		$form = $this->createForm($user);
 		$form->addText('name');
 		$form->validate();
-		$form->getMapper()->save($form);
+		$form->getMapper()->validate($form);
 		$errors = $form['name']->getErrors();
 		Assert::same('Please fill in your name.', reset($errors));
 	}

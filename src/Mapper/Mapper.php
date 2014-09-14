@@ -182,6 +182,9 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	 */
 	public function validate(Form $form)
 	{
+		if(!$this->validator) {
+			return;
+		}
 		$this->form = $form;
 		$originalExecutionStrategy = $this->executionStrategy;
 		$recover = function () use ($originalExecutionStrategy) {
@@ -301,7 +304,8 @@ class Mapper extends Object implements IMapper, IValidationMapper
 		if ($component instanceof Controls\Button) {
 			return TRUE;
 		}
-		if ($this->isValidating() && ($submittedBy = $this->form->submittedBy) && $submittedBy instanceof ISubmitterControl) {
+		if ($this->isValidating() && $this->form->isAnchored()
+			&& ($submittedBy = $this->form->isSubmitted()) && $submittedBy instanceof ISubmitterControl) {
 			$controls = $submittedBy->getValidationScope();
 			if ($controls === NULL) {
 				return FALSE;
