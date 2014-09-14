@@ -22,27 +22,15 @@ class DateTimeAdapter extends Object implements IAdapter
 	}
 
 
-	/**
-	 * @param \DateTime
-	 * @param string on of IAdapter constants -  DATE, TIME, DATE_TIME
-	 * @param string optional user format
-	 * @return string
-	 */
 	public function format(\DateTime $datetime, $type, $format = NULL)
 	{
 		return $datetime->format($format ?: $this->defaultFormats[$type]);
 	}
 
 
-	/**
-	 * @param string
-	 * @param string on of IAdapter constants -  DATE, TIME, DATE_TIME
-	 * @param string optional user format
-	 * @return \DateTime|null
-	 */
 	public function parse($value, $type, $format = NULL)
 	{
-		return \DateTime::createFromFormat($format ?: $this->defaultFormats[$type], $value);
+		return \DateTime::createFromFormat($format ?: $this->defaultFormats[$type], $value) ?: NULL;
 	}
 
 }
