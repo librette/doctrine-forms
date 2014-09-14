@@ -7,6 +7,7 @@ use Librette\Doctrine\Forms\Mapper\Mapper;
 use Librette\Doctrine\WrappedEntity;
 use LibretteTests\Doctrine\Forms\Model\CmsAddress;
 use LibretteTests\Doctrine\Forms\Model\CmsArticle;
+use LibretteTests\Doctrine\Forms\Model\CmsComment;
 use LibretteTests\Doctrine\Forms\Model\CmsGroup;
 use LibretteTests\Doctrine\Forms\Model\CmsUser;
 use LibretteTests\Doctrine\Forms\ORMTestCase;
@@ -208,6 +209,29 @@ class MapperLoadTestCase extends ORMTestCase
 		foreach ($userNames as $i => $username) {
 			Assert::same($username, $form['users'][$i]['name']->value);
 		}
+	}
+
+
+	public function testDateHandler()
+	{
+		$comment = new CmsComment();
+		$comment->added = new \DateTime('2010-05-20 20:00');
+		$comment->addedDate = new \DateTime('2010-05-20 20:00');
+		$comment->addedTime = new \DateTime('2010-05-20 20:00');
+
+		$form = $this->createForm($comment);
+		$form->addText('added');
+		$form->addText('addedDate');
+		$form->addText('addedTime');
+		$form->setParent(new PresenterMock());
+		Assert::same('2010-05-20 20:00:00', $form['added']->value);
+		Assert::same('2010-05-20', $form['addedDate']->value);
+		Assert::same('20:00:00', $form['addedTime']->value);
+
+		$form = $this->createForm($comment);
+		$form->addText('added')->setOption('date-format', 'Y-m-d');
+		$form->setParent(new PresenterMock());
+		Assert::same('2010-05-20', $form['added']->value);
 	}
 
 

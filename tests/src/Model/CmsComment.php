@@ -30,6 +30,24 @@ class CmsComment extends BaseEntity
 	public $text;
 
 	/**
+	 * @var \DateTime
+	 * @ORM\Column(type="datetime")
+	 */
+	public $added;
+
+	/**
+	 * @var \DateTime
+	 * @ORM\Column(type="date")
+	 */
+	public $addedDate;
+
+	/**
+	 * @var \DateTime
+	 * @ORM\Column(type="time")
+	 */
+	public $addedTime;
+
+	/**
 	 * @ORM\ManyToOne(targetEntity="CmsArticle", inversedBy="comments")
 	 * @ORM\JoinColumn(name="article_id", referencedColumnName="id")
 	 */

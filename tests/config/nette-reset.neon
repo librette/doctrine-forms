@@ -9,7 +9,7 @@ extensions:
 	validator: Kdyby\Validator\DI\ValidatorExtension
 	translator: Kdyby\Translation\DI\TranslationExtension
 	libretteDoctrine: Librette\Doctrine\DI\DoctrineExtension
-
+	doctrineForms: Librette\Doctrine\Forms\DI\DoctrineFormsExtension
 doctrine:
 	metadataCache: array
 	queryCache: array
@@ -27,12 +27,7 @@ nette:
 services:
 	cacheStorage:
 		class: Nette\Caching\Storages\MemoryStorage
-	- Librette\Doctrine\Forms\FormFactory(..., null)
-	-
-		implement: Librette\Doctrine\Forms\MapperFactory
-		class: Librette\Doctrine\Forms\Mapper\Mapper
-		arguments: [%entity%, %offset%]
-		parameters: [entity, offset = NULL]
+	- Librette\Forms\FormFactory
 translator:
 	dirs:
 		- %appDir%/lang

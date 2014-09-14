@@ -7,6 +7,7 @@ use Kdyby\Replicator\Container;
 use Librette\Doctrine\Forms\FormFactory;
 use LibretteTests\Doctrine\Forms\Model\CmsArticle;
 use LibretteTests\Doctrine\Forms\Model\CmsAttribute;
+use LibretteTests\Doctrine\Forms\Model\CmsComment;
 use LibretteTests\Doctrine\Forms\Model\CmsGroup;
 use LibretteTests\Doctrine\Forms\Model\CmsUser;
 use LibretteTests\Doctrine\Forms\ORMTestCase;
@@ -241,6 +242,32 @@ class MapperSaveTestCase extends ORMTestCase
 		Assert::contains('value 2', $values);
 		Assert::contains('value 3', $values);
 		$form->getMapper()->flush();
+	}
+
+
+	public function testDateHandler()
+	{
+		$this->createMemoryManager();
+		$comment = new CmsComment();
+		$form = $this->createForm($comment);
+		$form->addText('added');
+		$form->addText('addedDate');
+		$form->addText('addedTime');
+
+		$form->setValues([
+			'added' => '2014-05-30 20:00:00',
+			'addedDate' => '2014-05-30',
+			'addedTime' => '20:00:00',
+		]);
+		$form->getMapper()->save($form);
+		Assert::same('2014-05-30 20:00:00', $comment->added->format('Y-m-d H:i:s'));
+		Assert::same('2014-05-30', $comment->added->format('Y-m-d'));
+		Assert::same('20:00:00', $comment->added->format('H:i:s'));
+
+		$form['added']->setOption('date-format', 'Y/m/d');
+		$form['added']->setValue('2012/05/10');
+		$form->getMapper()->save($form);
+		Assert::same('2012-05-10', $comment->added->format('Y-m-d'));
 	}
 
 

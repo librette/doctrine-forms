@@ -21,6 +21,10 @@ class DoctrineFormsExtension extends CompilerExtension
 		],
 		'mapper'  => [
 			'handlers' => [],
+			'date'     => [
+				'adapter' => 'datetime',
+				'formats' => [],
+			],
 		],
 	];
 
@@ -39,6 +43,11 @@ class DoctrineFormsExtension extends CompilerExtension
 		'Librette\Doctrine\Forms\Builder\Handlers\ManyToManyHandler',
 	];
 
+	protected $dateHandlerAdapters = [
+		'strftime' => '\Librette\Doctrine\Forms\Mapper\Handlers\Date\StrftimeAdapter',
+		'datetime' => '\Librette\Doctrine\Forms\Mapper\Handlers\Date\DateTimeAdapter',
+	];
+
 
 	public function loadConfiguration()
 	{
@@ -46,7 +55,6 @@ class DoctrineFormsExtension extends CompilerExtension
 		if (!count($this->compiler->getExtensions('\Librette\Doctrine\DI\DoctrineExtension'))) {
 			$this->compiler->addExtension('libretteDoctrine', new DoctrineExtension());
 		}
-
 
 		$this->configureMapper($config['mapper']);
 		$this->configureBuilder($config['builder']);
@@ -64,6 +72,16 @@ class DoctrineFormsExtension extends CompilerExtension
 		        ->setArguments([new PhpLiteral('$entity'), new PhpLiteral('$offset')]);
 		$chain = $builder->addDefinition($this->prefix('mapperChainHandler'))
 		                 ->setClass('\Librette\Doctrine\Forms\Mapper\Handlers\ChainHandler');
+		if (!empty($config['date'])) {
+			$adapter = $config['date']['adapter'];
+			$def = $builder->addDefinition($this->prefix('dateHandlerAdapter'));
+			if (isset($this->dateHandlerAdapters[$adapter])) {
+				$def->setClass($this->dateHandlerAdapters[$adapter], [$config['date']['formats']]);
+			} else {
+				Compiler::parseService($def, $adapter);
+			}
+			$config['handlers'][] = '\Librette\Doctrine\Forms\Mapper\Handlers\DateHandler';
+		}
 
 		foreach (array_merge($config['handlers'], $this->defaultMapperHandlers) as $i => $handler) {
 			Compiler::parseService($def = $builder->addDefinition($this->prefix("mapperHandler$i")), $handler);
