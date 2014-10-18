@@ -19,6 +19,9 @@ class ChoiceHelpers
 		if (empty($options['value'])) {
 			$options['value'] = self::getValueFieldFallback($dao->getClassMetadata());
 		}
+		if (is_string($options['orderBy'])) {
+			$options['orderBy'] = [$options['orderBy'] => 'asc'];
+		}
 
 		return $dao->findPairs($options['criteria'], $options['value'], $options['orderBy'], $options['key']);
 	}
