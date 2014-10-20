@@ -15,7 +15,7 @@ use Nette\Forms\ISubmitterControl;
 use Nette\Object;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author David Matějka

@@ -31,3 +31,5 @@ services:
 translator:
 	dirs:
 		- %appDir%/lang
+validator:
+	translationDomain: "validators"

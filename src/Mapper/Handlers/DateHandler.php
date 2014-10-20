@@ -8,7 +8,7 @@ use Librette\Doctrine\WrappedEntity;
 use Nette\ComponentModel\Component;
 use Nette\Forms\Controls\TextBase;
 use Nette\Object;
-use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author David Matejka

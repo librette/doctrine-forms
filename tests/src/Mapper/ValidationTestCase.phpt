@@ -140,22 +140,6 @@ class ValidationTestCase extends ORMTestCase
 	}
 
 
-	private function createForm($entity, $offset = NULL)
-	{
-		/** @var Librette\Doctrine\Forms\FormFactory $formFactory */
-		$formFactory = $this->serviceLocator->getByType('Librette\Doctrine\Forms\FormFactory');
-
-		$mapper = $formFactory->createMapper($entity, $offset);
-		$mapper->setAutoFlush(FALSE);
-		$mapper->setValidator($this->serviceLocator->getByType('\Symfony\Component\Validator\ValidatorInterface'));
-		$form = $formFactory->create();
-		$form->setMapper($mapper);
-
-
-		return $form;
-	}
-
-
 	public function testViolationsTranslation()
 	{
 		$this->createMemoryManager(FALSE);
@@ -167,6 +151,22 @@ class ValidationTestCase extends ORMTestCase
 		$form->getMapper()->validate($form);
 		$errors = $form['name']->getErrors();
 		Assert::same('Please fill in your name.', reset($errors));
+	}
+
+
+	private function createForm($entity, $offset = NULL)
+	{
+		/** @var Librette\Doctrine\Forms\FormFactory $formFactory */
+		$formFactory = $this->serviceLocator->getByType('Librette\Doctrine\Forms\FormFactory');
+
+		$mapper = $formFactory->createMapper($entity, $offset);
+		$mapper->setAutoFlush(FALSE);
+		$mapper->setValidator($this->serviceLocator->getByType('\Symfony\Component\Validator\Validator\ValidatorInterface'));
+		$form = $formFactory->create();
+		$form->setMapper($mapper);
+
+
+		return $form;
 	}
 
 }
