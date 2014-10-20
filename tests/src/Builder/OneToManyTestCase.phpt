@@ -52,7 +52,7 @@ class OneToManyTestCase extends ORMTestCase
 	{
 		/** @var Librette\Doctrine\Forms\Builder\ReplicatorBuilder $builder */
 		$builder = $this->doHandle('phoneNumbers');
-		$replicator = $builder->getComponent();
+		$replicator = $builder->getFormComponent();
 		Tester\Assert::type('\Kdyby\Replicator\Container', $replicator);
 		Tester\Assert::type('\Nette\Forms\Container', $builder->getContainerPrototype());
 		$controlBuilder = $builder->add('phoneNumber');

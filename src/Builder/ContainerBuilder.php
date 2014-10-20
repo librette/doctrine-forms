@@ -4,15 +4,18 @@ namespace Librette\Doctrine\Forms\Builder;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Librette\Doctrine\Forms\Builder\Handlers\ChainHandler;
 use Librette\Doctrine\Forms\InvalidArgumentException;
+use Nette\ComponentModel\Container as CMContainer;
+use Nette\ComponentModel\IComponent;
 use Nette\Forms\Container;
 use Nette\Forms\Controls\SubmitButton;
 
 /**
  * @author David Matejka
- * @method Container getComponent()
  */
-class ContainerBuilder extends BaseBuilder implements \ArrayAccess
+class ContainerBuilder extends CMContainer implements IBuilder, \ArrayAccess
 {
+
+	use TBaseBuilder;
 
 	/** @var \Doctrine\ORM\Mapping\ClassMetadata */
 	protected $metadata;
@@ -23,13 +26,37 @@ class ContainerBuilder extends BaseBuilder implements \ArrayAccess
 	/** @var IBuilder[] */
 	protected $builders = [];
 
+	/** @var Container */
+	protected $container;
+
+	/** @var array of function(FormBuilder) */
+	public $onAttached = [];
+
 
 	public function __construct(ClassMetadata $metadata, Container $container, Configuration $configuration)
 	{
-		parent::__construct($container);
+		$this->container = $container;
 		$this->metadata = $metadata;
 		$handler = new ChainHandler([$configuration->getHandler()]);
 		$this->configuration = new Configuration($handler, $configuration->getLabelingStrategy());
+	}
+
+
+	/**
+	 * @return Container
+	 */
+	public function getFormComponent()
+	{
+		return $this->container;
+	}
+
+
+	protected function attached($obj)
+	{
+		parent::attached($obj);
+		if ($obj instanceof FormBuilder) {
+			$this->onAttached($obj);
+		}
 	}
 
 
@@ -53,7 +80,7 @@ class ContainerBuilder extends BaseBuilder implements \ArrayAccess
 	 */
 	public function addSubmit($name)
 	{
-		return $this->component[$name] = new SubmitButton($this->configuration->getLabelingStrategy()->getButtonLabel($name));
+		return $this->container[$name] = new SubmitButton($this->configuration->getLabelingStrategy()->getButtonLabel($name));
 	}
 
 
@@ -148,35 +175,40 @@ class ContainerBuilder extends BaseBuilder implements \ArrayAccess
 	}
 
 
-	public function offsetExists($name)
+	public function addComponent(IComponent $component, $name, $insertBefore = NULL)
 	{
-		return isset($this->builders[$name]);
+		if (!$component instanceof IBuilder) {
+			throw new InvalidArgumentException("IBuilder expected, instance of " . get_class($component) . ' given.');
+		}
+		$this->container[$name] = $component->getFormComponent();
+
+		return parent::addComponent($component, $name, $insertBefore);
+	}
+
+
+	public function offsetSet($name, $component)
+	{
+		$this->addComponent($component, $name);
 	}
 
 
 	public function offsetGet($name)
 	{
-		return $this->builders[$name];
+		return $this->getComponent($name, TRUE);
 	}
 
 
-	public function offsetSet($name, $builder)
+	public function offsetExists($name)
 	{
-		if (!$builder instanceof IBuilder) {
-			throw new InvalidArgumentException("Value must be an instance of Librette\\Doctrine\\Forms\\IBuilder");
-		}
-		$builder->attach($this, $name);
-		$this->component[$name] = $builder->getComponent();
-		$this->builders[$name] = $builder;
+		return $this->getComponent($name, FALSE) !== NULL;
 	}
 
 
 	public function offsetUnset($name)
 	{
-		if ($this->offsetExists($name)) {
-			$this->getComponent()->removeComponent($this->builders[$name]->getComponent());
-			unset($this->builders[$name]);
+		$component = $this->getComponent($name, FALSE);
+		if ($component !== NULL) {
+			$this->removeComponent($component);
 		}
 	}
-
 }

@@ -55,7 +55,7 @@ class ManyToManyTestCase extends ORMTestCase
 	{
 		$builder = $this->doHandle('groups');
 		/** @var Nette\Forms\Controls\MultiSelectBox $component */
-		$component = $builder->getComponent();
+		$component = $builder->getFormComponent();
 		Assert::type('\Nette\Forms\Controls\MultiSelectBox', $component);
 		Assert::count(4, $component->getItems());
 		$expectedItems = array_combine(array_map(function (CmsGroup $group) {
@@ -71,7 +71,7 @@ class ManyToManyTestCase extends ORMTestCase
 	{
 		$builder = $this->doHandle('groups', ['control' => ControlFactory::CHECKBOX_LIST]);
 		/** @var Nette\Forms\Controls\CheckboxList $component */
-		$component = $builder->getComponent();
+		$component = $builder->getFormComponent();
 		Assert::type('\Nette\Forms\Controls\CheckboxList', $component);
 		Assert::count(4, $component->getItems());
 	}
@@ -81,7 +81,7 @@ class ManyToManyTestCase extends ORMTestCase
 	{
 		$builder = $this->doHandle('groups', ['criteria' => ['id !=' => $this->groups[0]->id]]);
 		/** @var Nette\Forms\Controls\MultiSelectBox $component */
-		$component = $builder->getComponent();
+		$component = $builder->getFormComponent();
 		Assert::count(3, $component->getItems());
 	}
 
@@ -90,7 +90,7 @@ class ManyToManyTestCase extends ORMTestCase
 	{
 		$builder = $this->doHandle('groups', ['fill' => FALSE]);
 		/** @var Nette\Forms\Controls\MultiSelectBox $component */
-		$component = $builder->getComponent();
+		$component = $builder->getFormComponent();
 		Assert::count(0, $component->getItems());
 	}
 

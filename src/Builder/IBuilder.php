@@ -5,33 +5,19 @@ use Nette\ComponentModel\IComponent;
 
 /**
  * @author David Matejka
+ * @method IBuilder getParent()
  */
-interface IBuilder
+interface IBuilder extends IComponent
 {
 
 	/**
 	 * @return IComponent
 	 */
-	public function getComponent();
-
-
-	/**
-	 * @param IBuilder
-	 * @param string
-	 * @return void
-	 * @internal
-	 */
-	public function attach(IBuilder $builder, $name);
-
-
-	/**
-	 * @return IBuilder
-	 */
-	public function getParent();
+	public function getFormComponent();
 
 
 	/**
 	 * @return FormBuilder|null
 	 */
-	public function getFormBuilder();
+	public function getFormBuilder($need = TRUE);
 }

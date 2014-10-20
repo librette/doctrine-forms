@@ -52,7 +52,7 @@ class OneToOneTestCase extends ORMTestCase
 	{
 		/** @var Librette\Doctrine\Forms\Builder\ContainerBuilder $builder */
 		$builder = $this->doHandle('address');
-		Tester\Assert::type('\Nette\Forms\Container', $builder->getComponent());
+		Tester\Assert::type('\Nette\Forms\Container', $builder->getFormComponent());
 	}
 
 

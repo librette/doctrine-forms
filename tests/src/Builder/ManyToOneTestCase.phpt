@@ -63,7 +63,7 @@ class ManyToOneTestCase extends ORMTestCase
 			return $user->name;
 		}, $this->users));
 		/** @var Nette\Forms\Controls\SelectBox $component */
-		$component = $builder->getComponent();
+		$component = $builder->getFormComponent();
 		Tester\Assert::type('\Nette\Forms\Controls\SelectBox', $component);
 		Tester\Assert::count(4, $component->getItems());
 		Tester\Assert::same($component->getItems(), $items);
@@ -74,7 +74,7 @@ class ManyToOneTestCase extends ORMTestCase
 	{
 		$builder = $this->doHandle('user', ['control' => Librette\Doctrine\Forms\Builder\ControlFactory::RADIO_LIST]);
 		/** @var Nette\Forms\Controls\RadioList $component */
-		$component = $builder->getComponent();
+		$component = $builder->getFormComponent();
 		Tester\Assert::type('\Nette\Forms\Controls\RadioList', $component);
 		Tester\Assert::count(4, $component->getItems());
 	}
@@ -84,7 +84,7 @@ class ManyToOneTestCase extends ORMTestCase
 	{
 		$builder = $this->doHandle('user', ['fill' => FALSE]);
 		/** @var Nette\Forms\Controls\SelectBox $component */
-		$component = $builder->getComponent();
+		$component = $builder->getFormComponent();
 		Tester\Assert::count(0, $component->getItems());
 	}
 

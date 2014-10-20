@@ -48,7 +48,7 @@ class FormBuilderTestCase extends ORMTestCase
 		$builder = $this->createBuilder(CmsArticle::getClassName());
 		$controlBuilder = $builder->add('topic');
 		Assert::type('\Librette\Doctrine\Forms\Builder\ControlBuilder', $controlBuilder);
-		Assert::type('\Nette\Forms\Controls\TextInput', $controlBuilder->getComponent());
+		Assert::type('\Nette\Forms\Controls\TextInput', $controlBuilder->getFormComponent());
 	}
 
 
@@ -60,8 +60,8 @@ class FormBuilderTestCase extends ORMTestCase
 		Assert::count(2, $builder->getForm()->getComponents());
 		Assert::type('\Librette\Doctrine\Forms\Builder\ControlBuilder', $builders['topic']);
 		Assert::type('\Librette\Doctrine\Forms\Builder\ControlBuilder', $builders['text']);
-		Assert::equal('topic', $builders['topic']->getComponent()->caption);
-		Assert::equal('Foo', $builders['text']->getComponent()->caption);
+		Assert::equal('topic', $builders['topic']->getFormComponent()->caption);
+		Assert::equal('Foo', $builders['text']->getFormComponent()->caption);
 	}
 
 
@@ -78,7 +78,7 @@ class FormBuilderTestCase extends ORMTestCase
 		$builder = $this->createBuilder(CmsArticle::getClassName());
 		$builders = $builder->addExcept(['version', 'metadata'], ['topic' => ['caption' => 'Foo']]);
 		Assert::count(7, $builders);
-		Assert::equal('Foo', $builders['topic']->getComponent()->caption);
+		Assert::equal('Foo', $builders['topic']->getFormComponent()->caption);
 		/** @var Librette\Doctrine\Forms\Builder\ReplicatorBuilder $replicatorBuilder */
 		$replicatorBuilder = $builders['attributes'];
 		$builders = $replicatorBuilder->addAll();

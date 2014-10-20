@@ -45,21 +45,21 @@ class FieldHandlerTestCase extends ORMTestCase
 	public function testTextInput()
 	{
 		$builder = $this->doHandle('topic');
-		Assert::type('\Nette\Forms\Controls\TextInput', $builder->getComponent());
+		Assert::type('\Nette\Forms\Controls\TextInput', $builder->getFormComponent());
 	}
 
 
 	public function testTextArea()
 	{
 		$builder = $this->doHandle('text');
-		Assert::type('\Nette\Forms\Controls\TextArea', $builder->getComponent());
+		Assert::type('\Nette\Forms\Controls\TextArea', $builder->getFormComponent());
 	}
 
 
 	public function testCheckbox()
 	{
 		$builder = $this->doHandle('published');
-		Assert::type('\Nette\Forms\Controls\Checkbox', $builder->getComponent());
+		Assert::type('\Nette\Forms\Controls\Checkbox', $builder->getFormComponent());
 	}
 
 
@@ -68,7 +68,7 @@ class FieldHandlerTestCase extends ORMTestCase
 		/** @var ControlBuilder $builder */
 		$builder = $this->doHandle('topic');
 
-		Assert::same('topic', $builder->getComponent()->caption);
+		Assert::same('topic', $builder->getFormComponent()->caption);
 	}
 
 

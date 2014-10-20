@@ -8,7 +8,7 @@ use Nette\Forms\Controls\SubmitButton;
 
 /**
  * @author David Matejka
- * @method Replicator getComponent()
+ * @method Replicator getFormComponent()
  */
 class ReplicatorBuilder extends ContainerBuilder
 {
@@ -27,7 +27,7 @@ class ReplicatorBuilder extends ContainerBuilder
 	public function add($name, $options = [])
 	{
 		$builder = $this->createBuilder($name, $options);
-		$this->containerPrototype[$name] = $builder->getComponent();
+		$this->containerPrototype[$name] = $builder->getFormComponent();
 
 		//todo add builder to $this->builders?
 		return $builder;
@@ -48,7 +48,7 @@ class ReplicatorBuilder extends ContainerBuilder
 		}
 
 		$button = $this->addButton(function () use ($options) {
-			return $this->getComponent()
+			return $this->getFormComponent()
 			            ->addSubmit($options['name'], $options['caption'])
 			            ->setValidationScope(FALSE)
 			            ->addCreateOnClick($options['allowEmpty'], $options['callback']);
@@ -62,7 +62,7 @@ class ReplicatorBuilder extends ContainerBuilder
 
 	private function addMultiplier($callback)
 	{
-		$this->getComponent()
+		$this->getFormComponent()
 		     ->addText('count')
 		     ->setDefaultValue(1);
 
@@ -136,9 +136,9 @@ class ReplicatorBuilder extends ContainerBuilder
 	private function addButton($callback)
 	{
 		$this->registerReplicator();
-		$this->getComponent()->addComponent($this->containerPrototype, '__prototype'); //inner container has to be attached to the replicator
+		$this->getFormComponent()->addComponent($this->containerPrototype, '__prototype'); //inner container has to be attached to the replicator
 		$result = $callback();
-		$this->getComponent()->removeComponent($this->containerPrototype);
+		$this->getFormComponent()->removeComponent($this->containerPrototype);
 
 		return $result;
 	}
