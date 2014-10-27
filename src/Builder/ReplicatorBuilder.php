@@ -34,6 +34,19 @@ class ReplicatorBuilder extends ContainerBuilder
 	}
 
 
+	public function addIdentifiers()
+	{
+		$components = [];
+		foreach ($this->metadata->getIdentifierFieldNames() as $name) {
+			if(!isset($this->containerPrototype[$name])) {
+				$components[$name] = $this->containerPrototype->addHidden($name);
+			}
+		}
+
+		return $components;
+	}
+
+
 	public function addAddButton(array $options = [])
 	{
 		$options += ['name'       => 'add',
