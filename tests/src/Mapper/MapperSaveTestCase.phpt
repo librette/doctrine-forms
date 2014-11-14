@@ -16,6 +16,10 @@ use Tester\Assert;
 require_once __DIR__ . '/../../bootstrap.php';
 
 
+/**
+ * @author David Matejka
+ * @testCase
+ */
 class MapperSaveTestCase extends ORMTestCase
 {
 

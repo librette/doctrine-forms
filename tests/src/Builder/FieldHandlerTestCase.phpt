@@ -14,6 +14,10 @@ use Tester\Assert;
 require_once __DIR__ . '/../../bootstrap.php';
 
 
+/**
+ * @author David Matejka
+ * @testCase
+ */
 class FieldHandlerTestCase extends ORMTestCase
 {
 

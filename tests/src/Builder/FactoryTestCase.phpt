@@ -17,6 +17,7 @@ require_once __DIR__ . '/../../bootstrap.php';
 
 /**
  * @author David Matějka
+ * @testCase
  */
 class FactoryTestCase extends Tester\TestCase
 {
