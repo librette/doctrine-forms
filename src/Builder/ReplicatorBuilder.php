@@ -51,7 +51,7 @@ class ReplicatorBuilder extends ContainerBuilder
 	{
 		$options += ['name'       => 'add',
 		             'caption'    => $this->configuration->getLabelingStrategy()->getButtonLabel('add'),
-		             'allowEmpty' => NULL,
+		             'allowEmpty' => FALSE,
 		             'callback'   => function () {
 		             },
 		             'multiplier' => FALSE,
