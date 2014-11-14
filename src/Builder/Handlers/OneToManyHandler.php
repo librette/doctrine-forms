@@ -39,10 +39,22 @@ class OneToManyHandler extends Object implements IHandler
 		$dao = $this->entityManager->getDao($mapping['targetEntity']);
 		$containerPrototype = new Container();
 		$replicator = new Replicator(function (Container $container) use ($containerPrototype) {
-			/** @var IComponent $component */
-			foreach ($containerPrototype->getComponents() as $component) {
-				$container[$component->getName()] = clone $component;
-			}
+			$clone = function (Container $targetContainer, Container $sourceContainer) use (&$clone) {
+				/** @var IComponent $component */
+				foreach ($sourceContainer->getComponents() as $component) {
+					if ($component instanceof Container) {
+						/** @var Container $component */
+						$container = new Container();
+						$container->setCurrentGroup($component->getCurrentGroup());
+						$container->onValidate = $component->onValidate;
+						$targetContainer[$component->getName()] = $container;
+						$clone($container, $component);
+					} else {
+						$targetContainer[$component->getName()] = clone $component;
+					}
+				}
+			};
+			$clone($container, $containerPrototype);
 		}, $options['createDefault']);
 
 		return new ReplicatorBuilder($dao->getClassMetadata(), $replicator, $configuration, $containerPrototype);

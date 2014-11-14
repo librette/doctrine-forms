@@ -19,6 +19,13 @@ class CmsComment extends BaseEntity
 	 */
 	public $id;
 
+
+	/**
+	 * @var CmsEmail
+	 * @ORM\OneToOne(targetEntity="CmsEmail")
+	 */
+	protected $email;
+
 	/**
 	 * @ORM\Column(type="string", length=255)
 	 */

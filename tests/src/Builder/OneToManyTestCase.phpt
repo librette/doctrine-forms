@@ -6,6 +6,7 @@ use Kdyby\Doctrine\EntityManager;
 use Librette;
 use Librette\Doctrine\Forms\Builder\Configuration;
 use Librette\Doctrine\Forms\Builder\Handlers;
+use LibretteTests\Doctrine\Forms\Model\CmsArticle;
 use LibretteTests\Doctrine\Forms\Model\CmsUser;
 use LibretteTests\Doctrine\Forms\ORMTestCase;
 use Nette;
@@ -38,13 +39,12 @@ class OneToManyTestCase extends ORMTestCase
 		$fieldHandler = new Handlers\FieldHandler();
 		$chainHandler = new Handlers\ChainHandler([$oneToManyHandler, $fieldHandler]);
 		$this->configuration = new Configuration($chainHandler);
-		$this->meta = $this->em->getClassMetadata(CmsUser::getClassName());
 	}
 
 
 	public function testBuilderType()
 	{
-		$builder = $this->doHandle('phoneNumbers');
+		$builder = $this->doHandle('phoneNumbers', [], $this->em->getClassMetadata(CmsUser::getClassName()));
 		Tester\Assert::type('\Librette\Doctrine\Forms\Builder\ReplicatorBuilder', $builder);
 	}
 
@@ -52,7 +52,7 @@ class OneToManyTestCase extends ORMTestCase
 	public function testReplicator()
 	{
 		/** @var Librette\Doctrine\Forms\Builder\ReplicatorBuilder $builder */
-		$builder = $this->doHandle('phoneNumbers');
+		$builder = $this->doHandle('phoneNumbers', [], $this->em->getClassMetadata(CmsUser::getClassName()));
 		$replicator = $builder->getFormComponent();
 		Tester\Assert::type('\Kdyby\Replicator\Container', $replicator);
 		Tester\Assert::type('\Nette\Forms\Container', $builder->getContainerPrototype());
@@ -76,9 +76,25 @@ class OneToManyTestCase extends ORMTestCase
 	}
 
 
-	protected function doHandle($name, $options = [])
+	public function testNestedContainer()
 	{
-		return $this->configuration->getHandler()->handle($name, $options, $this->meta, $this->configuration);
+		$chain = new Handlers\ChainHandler([$this->configuration->getHandler(), new Handlers\OneToOneHandler($this->em)]);
+		$config = new Configuration($chain);
+		/** @var Librette\Doctrine\Forms\Builder\ReplicatorBuilder $builder */
+		$builder = $chain->handle('comments', [], $this->em->getClassMetadata(CmsArticle::getClassName()), $config);
+		/** @var Librette\Doctrine\Forms\Builder\ContainerBuilder $containerBuilder */
+		$containerBuilder = $builder->add('email');
+		$containerBuilder->add('email');
+		$replicator = $builder->getFormComponent();
+		$container = $replicator->createOne();
+		Tester\Assert::type('\Nette\Forms\Controls\TextInput', $container['email']['email']);
+
+	}
+
+
+	protected function doHandle($name, $options = [], ClassMetadata $metadata)
+	{
+		return $this->configuration->getHandler()->handle($name, $options, $metadata, $this->configuration);
 	}
 }
 
