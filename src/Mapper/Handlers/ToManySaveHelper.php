@@ -139,7 +139,8 @@ class ToManySaveHelper extends Object
 	{
 		$entityWrapper = $this->wrappedEntity->getEntityWrapper();
 		$byPrimary = [];
-		foreach ($this->wrappedEntity->getValue($this->component->name) as $subEntity) {
+		$value = $this->wrappedEntity->getValue($this->component->name);
+		foreach (is_array($value) || $value instanceof \Traversable ? $value : [] as $subEntity) {
 			$wrappedSubEntity = $entityWrapper->wrap($subEntity);
 			$identifierValue = $wrappedSubEntity->getFlattenIdentifier();
 			$keyHash = $this->createKeyHash($this->getIdentifierValues($identifierValue));
@@ -198,11 +199,11 @@ class ToManySaveHelper extends Object
 	{
 		$this->forRemoval = $this->byPrimary = $this->groupByPrimaryHash();
 		$originalCollection = $this->wrappedEntity->getRawValue($this->component->name);
-		if (!$originalCollection instanceof Collection) {
+		if (!$originalCollection instanceof Collection && $originalCollection !== NULL) {
 			throw new UnexpectedValueException("Instance of \\Doctrine\\Common\\Collections\\Collection expected, "
-			. is_object($originalCollection) ? get_class($originalCollection) : gettype($originalCollection) . ' given');
+			. (is_object($originalCollection) ? get_class($originalCollection) : gettype($originalCollection)) . ' given');
 		}
-		$this->collection = new ArrayCollection($originalCollection->toArray());
+		$this->collection = new ArrayCollection($originalCollection ? $originalCollection->toArray() : []);
 	}
 
 
