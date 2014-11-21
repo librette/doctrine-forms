@@ -4,6 +4,7 @@ namespace Librette\Doctrine\Forms\Builder\Handlers;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Kdyby\Doctrine\EntityManager;
 use Kdyby\Replicator\Container as Replicator;
+use Librette\Doctrine\Forms\Builder\ClonnableReplicator;
 use Librette\Doctrine\Forms\Builder\Configuration;
 use Librette\Doctrine\Forms\Builder\IHandler;
 use Librette\Doctrine\Forms\Builder\ReplicatorBuilder;
@@ -38,11 +39,11 @@ class OneToManyHandler extends Object implements IHandler
 		$options += ['createDefault' => 0];
 		$dao = $this->entityManager->getDao($mapping['targetEntity']);
 		$containerPrototype = new Container();
-		$replicator = new Replicator(function (Container $container) use ($containerPrototype) {
+		$replicator = new ClonnableReplicator(function (Container $container) use ($containerPrototype) {
 			$clone = function (Container $targetContainer, Container $sourceContainer) use (&$clone) {
 				/** @var IComponent $component */
 				foreach ($sourceContainer->getComponents() as $component) {
-					if ($component instanceof Container) {
+					if ($component instanceof Container && !$component instanceof ClonnableReplicator) {
 						/** @var Container $component */
 						$container = new Container();
 						$container->setCurrentGroup($component->getCurrentGroup());
