@@ -38,7 +38,7 @@ class ReplicatorBuilder extends ContainerBuilder
 	{
 		$components = [];
 		foreach ($this->metadata->getIdentifierFieldNames() as $name) {
-			if(!isset($this->containerPrototype[$name])) {
+			if (!isset($this->containerPrototype[$name])) {
 				$components[$name] = $this->containerPrototype->addHidden($name);
 			}
 		}
