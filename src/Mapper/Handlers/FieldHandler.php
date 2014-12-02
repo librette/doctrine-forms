@@ -1,6 +1,7 @@
 <?php
 namespace Librette\Doctrine\Forms\Mapper\Handlers;
 
+use Doctrine\DBAL\Types\Type;
 use Librette\Doctrine\Forms\Mapper\IHandler;
 use Librette\Doctrine\Forms\Mapper\Mapper;
 use Librette\Doctrine\WrappedEntity;
@@ -16,6 +17,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class FieldHandler implements IHandler
 {
 
+	private static $numberTypes = [Type::INTEGER, Type::SMALLINT, Type::BIGINT, Type::FLOAT, Type::DECIMAL];
 
 	public function load(WrappedEntity $wrappedEntity, Component $component, Mapper $mapper)
 	{
@@ -46,6 +48,10 @@ class FieldHandler implements IHandler
 			$value = $component->getValue();
 		} elseif ($component instanceof Container) {
 			$value = $component->getValues(TRUE);
+		}
+		$mapping = $wrappedEntity->getMetadata()->getFieldMapping($component->name);
+		if ($value === "" && $mapping['nullable'] && in_array($mapping['type'], self::$numberTypes)) {
+			$value = NULL;
 		}
 		$mapper->execute(function () use ($wrappedEntity, $component, $value) {
 			$wrappedEntity->setValue($component->name, $value);
