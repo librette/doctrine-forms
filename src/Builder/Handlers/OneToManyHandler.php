@@ -10,6 +10,7 @@ use Librette\Doctrine\Forms\Builder\IHandler;
 use Librette\Doctrine\Forms\Builder\ReplicatorBuilder;
 use Nette\ComponentModel\IComponent;
 use Nette\Forms\Container;
+use Nette\Forms\Controls\BaseControl;
 use Nette\Object;
 
 /**
@@ -51,7 +52,17 @@ class OneToManyHandler extends Object implements IHandler
 						$targetContainer[$component->getName()] = $container;
 						$clone($container, $component);
 					} else {
-						$targetContainer[$component->getName()] = clone $component;
+						$targetContainer[$component->getName()] = $control = clone $component;
+						if ($control instanceof BaseControl) {
+							$clonner = function () {
+								/** @var BaseControl $this */
+								$this->control = clone $this->control;
+								$this->label = clone $this->label;
+
+							};
+							$clonner = $clonner->bindTo($control, $control);
+							$clonner();
+						}
 					}
 				}
 			};
