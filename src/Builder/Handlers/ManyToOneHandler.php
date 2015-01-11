@@ -45,8 +45,10 @@ class ManyToOneHandler extends Object implements IHandler
 		} else {
 			$control->caption = $options['caption'];
 		}
-		$this->setPrompt($options, $control, $mapping);
-		$this->fillOptions($options, $control, $mapping);
+		if ($control instanceof ChoiceControl) {
+			$this->setPrompt($options, $control, $mapping);
+			$this->fillOptions($options, $control, $mapping);
+		}
 
 		return new ControlBuilder($control);
 	}
