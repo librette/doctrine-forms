@@ -36,7 +36,11 @@ class ManyToManyHandler extends Object implements IHandler
 		}
 		$options += ['control' => ControlFactory::MULTI_SELECT_BOX, 'fill' => TRUE];
 		$control = ControlFactory::create($options['control'], ['\Nette\Forms\Controls\MultiChoiceControl'], ControlFactory::MULTI_SELECT_BOX);
-
+		if (empty($options['caption'])) {
+			$control->caption = $configuration->getLabelingStrategy()->getControlLabel($name, $classMetadata);
+		} else {
+			$control->caption = $options['caption'];
+		}
 		if ($options['fill'] === TRUE) {
 			$dao = $this->entityManager->getDao($mapping['targetEntity']);
 			$items = ChoiceHelpers::getPairs($dao, $options);
