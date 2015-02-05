@@ -66,6 +66,9 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	/** @var \Nette\Forms\Form */
 	protected $form;
 
+	/** @var object[] */
+	protected $entities = [];
+
 
 	/**
 	 * @param object
@@ -182,7 +185,7 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	 */
 	public function validate(Form $form)
 	{
-		if(!$this->validator) {
+		if (!$this->validator) {
 			return;
 		}
 		$this->form = $form;
@@ -197,6 +200,7 @@ class Mapper extends Object implements IMapper, IValidationMapper
 			$this->saveValues($this->applyOffset($form->getComponents(), $this->offset), $this->entity);
 			$recover();
 		} catch (\Exception $e) {
+			//todo: better exception handling
 			$recover();
 		}
 	}
@@ -217,6 +221,7 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	public function save(Form $form)
 	{
 		$this->form = $form;
+		$this->entities = [];
 		$this->execute(function () {
 			$this->entityManager->persist($this->entity);
 		});
@@ -225,7 +230,17 @@ class Mapper extends Object implements IMapper, IValidationMapper
 			return;
 		}
 		$this->getExecutionStrategy()->confirm();
-		if ($this->getAutoFlush()) {
+		$valid = TRUE;
+		foreach ($this->entities as $entity) {
+			try {
+				$this->runValidation(function (ValidatorInterface $validator) use ($entity) {
+					return $validator->validate($entity);
+				}, $form);
+			} catch (ValidationException $e) {
+				$valid = FALSE;
+			}
+		}
+		if ($valid && $this->getAutoFlush()) {
 			$this->flush();
 		}
 	}
@@ -333,6 +348,7 @@ class Mapper extends Object implements IMapper, IValidationMapper
 	 */
 	protected function handle($components, $entity, $operation)
 	{
+		$this->entities[] = $entity;
 		$wrappedEntity = $this->entityWrapper->wrap($entity);
 		foreach ($this->iterable($components) as $component) {
 			if ($this->shouldSkip($component)) {
