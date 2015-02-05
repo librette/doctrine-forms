@@ -44,15 +44,15 @@ class DoctrineFormsExtension extends CompilerExtension
 	];
 
 	protected $dateHandlerAdapters = [
-		'strftime' => '\Librette\Doctrine\Forms\Mapper\Handlers\Date\StrftimeAdapter',
-		'datetime' => '\Librette\Doctrine\Forms\Mapper\Handlers\Date\DateTimeAdapter',
+		'strftime' => 'Librette\Doctrine\Forms\Mapper\Handlers\Date\StrftimeAdapter',
+		'datetime' => 'Librette\Doctrine\Forms\Mapper\Handlers\Date\DateTimeAdapter',
 	];
 
 
 	public function loadConfiguration()
 	{
 		$config = $this->getConfig($this->defaults);
-		if (!count($this->compiler->getExtensions('\Librette\Doctrine\DI\DoctrineExtension'))) {
+		if (!count($this->compiler->getExtensions('Librette\Doctrine\DI\DoctrineExtension'))) {
 			$this->compiler->addExtension('libretteDoctrine', new DoctrineExtension());
 		}
 
@@ -68,10 +68,10 @@ class DoctrineFormsExtension extends CompilerExtension
 		$builder->addDefinition($this->prefix('formFactory'))
 		        ->setClass('Librette\Doctrine\Forms\FormFactory');
 		$builder->addDefinition($this->prefix('mapperFactory'))
-		        ->setImplement('\Librette\Doctrine\Forms\MapperFactory')
+		        ->setImplement('Librette\Doctrine\Forms\MapperFactory')
 		        ->setArguments([new PhpLiteral('$entity'), new PhpLiteral('$offset')]);
 		$chain = $builder->addDefinition($this->prefix('mapperChainHandler'))
-		                 ->setClass('\Librette\Doctrine\Forms\Mapper\Handlers\ChainHandler');
+		                 ->setClass('Librette\Doctrine\Forms\Mapper\Handlers\ChainHandler');
 		if (!empty($config['date'])) {
 			$adapter = $config['date']['adapter'];
 			$def = $builder->addDefinition($this->prefix('dateHandlerAdapter'));
@@ -80,7 +80,7 @@ class DoctrineFormsExtension extends CompilerExtension
 			} else {
 				Compiler::parseService($def, $adapter);
 			}
-			$config['handlers'][] = '\Librette\Doctrine\Forms\Mapper\Handlers\DateHandler';
+			$config['handlers'][] = 'Librette\Doctrine\Forms\Mapper\Handlers\DateHandler';
 		}
 
 		foreach (array_merge($config['handlers'], $this->defaultMapperHandlers) as $i => $handler) {
@@ -101,7 +101,7 @@ class DoctrineFormsExtension extends CompilerExtension
 		        ->setClass('Librette\Doctrine\Forms\Builder\FormBuilderFactory');
 
 		$chain = $builder->addDefinition($this->prefix('builderChainHandler'))
-		                 ->setClass('\Librette\Doctrine\Forms\Builder\Handlers\ChainHandler');
+		                 ->setClass('Librette\Doctrine\Forms\Builder\Handlers\ChainHandler');
 
 		foreach (array_merge($config['handlers'], $this->defaultBuilderHandlers) as $i => $handler) {
 			Compiler::parseService($def = $builder->addDefinition($this->prefix("builderHandler$i")), $handler);
@@ -109,7 +109,7 @@ class DoctrineFormsExtension extends CompilerExtension
 			$chain->addSetup('add', [$def, FALSE]);
 		}
 		$builder->addDefinition($this->prefix('builderConfiguration'))
-		        ->setClass('\Librette\Doctrine\Forms\Builder\Configuration');
+		        ->setClass('Librette\Doctrine\Forms\Builder\Configuration');
 	}
 
 
