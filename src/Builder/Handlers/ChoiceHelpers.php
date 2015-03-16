@@ -26,7 +26,7 @@ class ChoiceHelpers
 		if (is_string($options['orderBy'])) {
 			$options['orderBy'] = [$options['orderBy'] => 'asc'];
 		}
-		if ($dao->getClassMetadata()->hasField($options['value'])) {
+		if ($dao->getClassMetadata()->hasField($options['value']) && !array_filter($options['criteria'], 'is_callable')) {
 			return $dao->findPairs($options['criteria'], $options['value'], $options['orderBy'], $options['key']);
 		} else {
 			return self::getPairsAdvanced($dao, $options);
@@ -36,12 +36,19 @@ class ChoiceHelpers
 
 	private static function getPairsAdvanced(EntityDao $dao, array $options)
 	{
-		$query = $dao->createQueryBuilder('e')
-		             ->whereCriteria($options['criteria'])
-		             ->select("e")
-		             ->resetDQLPart('from')->from($dao->getClassName(), 'e', 'e.' . $options['key'])
-		             ->autoJoinOrderBy((array) $options['orderBy'])
-		             ->getQuery();
+
+		$qb = $dao->createQueryBuilder('e')
+		          ->select("e")
+		          ->resetDQLPart('from')->from($dao->getClassName(), 'e', 'e.' . $options['key'])
+		          ->autoJoinOrderBy((array) $options['orderBy']);
+		foreach ($options['criteria'] as $key => $value) {
+			if (is_numeric($key) && is_callable($value)) {
+				$value($qb, 'e');
+			} else {
+				$qb->whereCriteria([$key => $value]);
+			}
+		}
+		$query = $qb->getQuery();
 		$parts = explode('.', $options['value']);
 
 		$result = $query->getResult();
