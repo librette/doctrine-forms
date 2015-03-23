@@ -18,6 +18,8 @@ use Nette\Object;
 class ManyToOneHandler extends Object implements IHandler
 {
 
+	use TChoiceHandler;
+
 	private static $allowedControls = [
 		'\Nette\Forms\Controls\ChoiceControl',
 		'\Nette\Forms\Controls\HiddenField'
@@ -75,33 +77,9 @@ class ManyToOneHandler extends Object implements IHandler
 	}
 
 
-	/**
-	 * @param array
-	 * @param IControl
-	 * @param array
-	 */
-	protected function fillOptions(array $options, $control, $mapping)
+	protected function getEntityManager()
 	{
-		if ($options['fill'] !== TRUE) {
-			return;
-		}
-		$items = $this->getItems($options, $mapping);
-		/** @var ChoiceControl $control */
-		$control->setItems($items);
-	}
-
-
-	/**
-	 * @param array $options
-	 * @param $mapping
-	 * @return array
-	 */
-	protected function getItems(array $options, $mapping)
-	{
-		$dao = $this->entityManager->getDao($mapping['targetEntity']);
-		$items = ChoiceHelpers::getPairs($dao, $options);
-
-		return $items;
+		return $this->entityManager;
 	}
 
 }

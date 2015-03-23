@@ -16,6 +16,8 @@ use Nette\Object;
 class ManyToManyHandler extends Object implements IHandler
 {
 
+	use TChoiceHandler;
+
 	/** @var EntityManager */
 	protected $entityManager;
 
@@ -41,14 +43,15 @@ class ManyToManyHandler extends Object implements IHandler
 		} else {
 			$control->caption = $options['caption'];
 		}
-		if ($options['fill'] === TRUE) {
-			$dao = $this->entityManager->getDao($mapping['targetEntity']);
-			$items = ChoiceHelpers::getPairs($dao, $options);
-			/** @var MultiChoiceControl $control */
-			$control->setItems($items);
-		}
+		$this->fillOptions($options, $control, $mapping);
 
 		return new ControlBuilder($control);
+	}
+
+
+	protected function getEntityManager()
+	{
+		return $this->entityManager;
 	}
 
 }
