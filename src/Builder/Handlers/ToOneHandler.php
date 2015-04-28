@@ -15,7 +15,7 @@ use Nette\Object;
 /**
  * @author David Matejka
  */
-class ManyToOneHandler extends Object implements IHandler
+class ToOneHandler extends Object implements IHandler
 {
 
 	use TChoiceHandler;
@@ -37,7 +37,7 @@ class ManyToOneHandler extends Object implements IHandler
 
 	public function handle($name, array $options, ClassMetadata $classMetadata, Configuration $configuration)
 	{
-		if (!$mapping = MetadataHelpers::getAssociationMapping($classMetadata, $name, ClassMetadata::MANY_TO_ONE)) {
+		if (!$mapping = MetadataHelpers::getAssociationMapping($classMetadata, $name, [ClassMetadata::MANY_TO_ONE, ClassMetadata::ONE_TO_ONE])) {
 			return NULL;
 		}
 		$options += ['control' => ControlFactory::SELECT_BOX, 'fill' => TRUE];

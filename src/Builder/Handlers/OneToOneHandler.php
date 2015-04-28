@@ -27,6 +27,9 @@ class OneToOneHandler extends Object implements IHandler
 
 	public function handle($name, array $options, ClassMetadata $classMetadata, Configuration $configuration)
 	{
+		if (!empty($options['control'])) {
+			return NULL;
+		}
 		if (!$mapping = MetadataHelpers::getAssociationMapping($classMetadata, $name, ClassMetadata::ONE_TO_ONE)) {
 			return NULL;
 		}

@@ -37,7 +37,7 @@ class FormBuilderTestCase extends ORMTestCase
 			new Handlers\FieldHandler(),
 			new Handlers\OneToOneHandler($this->em),
 			new Handlers\OneToManyHandler($this->em),
-			new Handlers\ManyToOneHandler($this->em),
+			new Handlers\ToOneHandler($this->em),
 			new Handlers\ManyToManyHandler($this->em),
 		]);
 		$this->configuration = new Configuration($chainHandler);

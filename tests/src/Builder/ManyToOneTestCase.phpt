@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Kdyby\Doctrine\EntityManager;
 use Librette;
 use Librette\Doctrine\Forms\Builder\Configuration;
-use Librette\Doctrine\Forms\Builder\Handlers\ManyToOneHandler;
+use Librette\Doctrine\Forms\Builder\Handlers\ToOneHandler;
 use LibretteTests\Doctrine\Forms\Model\CmsArticle;
 use LibretteTests\Doctrine\Forms\Model\CmsUser;
 use LibretteTests\Doctrine\Forms\ORMTestCase;
@@ -38,7 +38,7 @@ class ManyToOneTestCase extends ORMTestCase
 	public function setUp()
 	{
 		$this->em = $this->createMemoryManager(TRUE);
-		$this->configuration = new Configuration(new ManyToOneHandler($this->em));
+		$this->configuration = new Configuration(new ToOneHandler($this->em));
 		$this->meta = $this->em->getClassMetadata(CmsArticle::getClassName());
 		foreach ([1, 2, 3, 4] as $id) {
 			$this->users[] = $group = new CmsUser('john ' . $id);
