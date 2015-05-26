@@ -53,8 +53,11 @@ class DateHandler extends Object implements IHandler
 		if (!$this->canHandle($component, $wrappedEntity)) {
 			return FALSE;
 		}
-		$mapping = $wrappedEntity->getMetadata()->getFieldMapping($component->getName());
 		/** @var TextBase $component */
+		if ($component->isOmitted()) {
+			return TRUE;
+		}
+		$mapping = $wrappedEntity->getMetadata()->getFieldMapping($component->getName());
 		$value = $component->getValue();
 		if (is_string($value)) {
 			$format = $component->getOption('date-format');

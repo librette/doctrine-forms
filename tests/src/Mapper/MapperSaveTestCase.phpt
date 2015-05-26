@@ -43,6 +43,22 @@ class MapperSaveTestCase extends ORMTestCase
 	}
 
 
+	public function testOmittedField()
+	{
+		$this->createMemoryManager(FALSE);
+		$user = new CmsUser();
+		$user->username = 'Jack';
+
+		$form = $this->createForm($user);
+		$form->addText('username', 'Username')
+		     ->setValue('John')
+		     ->setOmitted(TRUE);
+		$form->getMapper()->save($form);
+
+		Assert::same('Jack', $user->username);
+	}
+
+
 	public function testFieldArray()
 	{
 		$this->createMemoryManager(FALSE);

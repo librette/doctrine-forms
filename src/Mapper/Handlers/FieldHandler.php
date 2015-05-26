@@ -45,6 +45,9 @@ class FieldHandler implements IHandler
 
 		$value = NULL;
 		if ($component instanceof IControl) {
+			if ($component->isOmitted()) {
+				return TRUE;
+			}
 			$value = $component->getValue();
 		} elseif ($component instanceof Container) {
 			$value = $component->getValues(TRUE);

@@ -71,6 +71,9 @@ class ToOneHandler implements IHandler
 			}
 
 		} elseif ($component instanceof IControl) {
+			if ($component->isOmitted()) {
+				return TRUE;
+			}
 			$value = $component->getValue() ?: NULL;
 			if ($wrappedEntity->hasAssociation($component->name) && $value && !is_object($value)) {
 				$association = $wrappedEntity->getMetadata()->getAssociationMapping($component->name);

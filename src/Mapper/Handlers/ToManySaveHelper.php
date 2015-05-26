@@ -12,6 +12,7 @@ use Nette\ComponentModel\Component;
 use Nette\Forms\Container;
 use Nette\Forms\Controls\BaseControl;
 use Nette\Forms\Controls\MultiChoiceControl;
+use Nette\Forms\IControl;
 use Nette\Object;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -64,6 +65,9 @@ class ToManySaveHelper extends Object
 
 	public function process()
 	{
+		if ($this->component instanceof IControl && $this->component->isOmitted()) {
+			return;
+		}
 		$data = $this->component instanceof MultiChoiceControl ? $this->component->getValue() : $this->component->getValues(TRUE);
 		$associationMapping = $this->wrappedEntity->getMetadata()->getAssociationMapping($this->component->name);
 		$this->type = $associationMapping['type'];
