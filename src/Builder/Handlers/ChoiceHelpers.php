@@ -26,7 +26,7 @@ class ChoiceHelpers
 		if (is_string($options['orderBy'])) {
 			$options['orderBy'] = [$options['orderBy'] => 'asc'];
 		}
-		if ($dao->getClassMetadata()->hasField($options['value']) && !array_filter($options['criteria'], 'is_callable')) {
+		if (is_string($options['value']) && $dao->getClassMetadata()->hasField($options['value']) && !array_filter($options['criteria'], 'is_callable')) {
 			return $dao->findPairs($options['criteria'], $options['value'], $options['orderBy'], $options['key']);
 		} else {
 			return self::getPairsAdvanced($dao, $options);
@@ -49,17 +49,23 @@ class ChoiceHelpers
 			}
 		}
 		$query = $qb->getQuery();
-		$parts = explode('.', $options['value']);
+		if (is_string($options['value'])) {
+			$parts = explode('.', $options['value']);
+			$callback = function ($value) use ($parts) {
+				foreach ($parts as $part) {
+					$value = $value->$part;
+				}
+
+				return $value;
+			};
+		} else {
+			$callback = $options['value'];
+		}
+
 
 		$result = $query->getResult();
 
-		return array_map(function ($value) use ($parts) {
-			foreach ($parts as $part) {
-				$value = $value->$part;
-			}
-
-			return $value;
-		}, $result);
+		return array_map($callback, $result);
 	}
 
 
