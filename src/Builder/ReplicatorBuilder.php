@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Kdyby\Replicator\Container as Replicator;
 use Nette\Forms\Container;
 use Nette\Forms\Controls\SubmitButton;
+use Nette\Utils\ObjectMixin;
 
 /**
  * @author David Matejka
@@ -140,7 +141,7 @@ class ReplicatorBuilder extends ContainerBuilder
 
 	private function registerReplicator()
 	{
-		if (!SubmitButton::extensionMethod('addCreateOnClick')) {
+		if (!ObjectMixin::getExtensionMethod(SubmitButton::class, 'addCreateOnClick')) {
 			Replicator::register();
 		}
 	}
