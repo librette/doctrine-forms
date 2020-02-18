@@ -3,14 +3,13 @@ namespace Librette\Doctrine\Forms\Builder\Handlers;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Kdyby\Doctrine\EntityManager;
-use Kdyby\Replicator\Container as Replicator;
 use Librette\Doctrine\Forms\Builder\ClonnableReplicator;
 use Librette\Doctrine\Forms\Builder\Configuration;
 use Librette\Doctrine\Forms\Builder\IHandler;
 use Librette\Doctrine\Forms\Builder\ReplicatorBuilder;
+use Librette\Doctrine\Forms\Builder\ControlCloneUtil;
 use Nette\ComponentModel\IComponent;
 use Nette\Forms\Container;
-use Nette\Forms\Controls\BaseControl;
 use Nette\Object;
 
 /**
@@ -52,17 +51,7 @@ class OneToManyHandler extends Object implements IHandler
 						$targetContainer[$component->getName()] = $container;
 						$clone($container, $component);
 					} else {
-						$targetContainer[$component->getName()] = $control = clone $component;
-						if ($control instanceof BaseControl) {
-							$clonner = function () {
-								/** @var BaseControl $this */
-								$this->control = clone $this->control;
-								$this->label = clone $this->label;
-
-							};
-							$clonner = $clonner->bindTo($control, $control);
-							$clonner();
-						}
+						$targetContainer[$component->getName()] = ControlCloneUtil::cloneControl($component);
 					}
 				}
 			};
