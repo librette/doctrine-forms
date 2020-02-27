@@ -4,13 +4,14 @@ namespace Librette\Doctrine\Forms\Builder\Handlers;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Librette\Doctrine\Forms\Builder\Configuration;
 use Librette\Doctrine\Forms\Builder\IHandler;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class ChainHandler extends Object implements IHandler
+class ChainHandler implements IHandler
 {
+	use SmartObject;
 
 	/** @var IHandler[] */
 	protected $handlers = [];

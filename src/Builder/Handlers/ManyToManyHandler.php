@@ -8,14 +8,14 @@ use Librette\Doctrine\Forms\Builder\ControlBuilder;
 use Librette\Doctrine\Forms\Builder\ControlFactory;
 use Librette\Doctrine\Forms\Builder\IHandler;
 use Nette\Forms\Controls\MultiChoiceControl;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class ManyToManyHandler extends Object implements IHandler
+class ManyToManyHandler implements IHandler
 {
-
+	use SmartObject;
 	use TChoiceHandler;
 
 	/** @var EntityManager */

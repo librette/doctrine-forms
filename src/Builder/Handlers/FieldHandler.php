@@ -6,13 +6,14 @@ use Librette\Doctrine\Forms\Builder\Configuration;
 use Librette\Doctrine\Forms\Builder\ControlBuilder;
 use Librette\Doctrine\Forms\Builder\ControlFactory;
 use Librette\Doctrine\Forms\Builder\IHandler;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class FieldHandler extends Object implements IHandler
+class FieldHandler implements IHandler
 {
+	use SmartObject;
 
 	public function handle($name, array $options, ClassMetadata $classMetadata, Configuration $configuration)
 	{

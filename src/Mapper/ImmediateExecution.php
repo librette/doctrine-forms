@@ -1,14 +1,14 @@
 <?php
 namespace Librette\Doctrine\Forms\Mapper;
-
-use Nette\Object;
+use Nette\SmartObject;
 use Nette\Utils\Callback;
 
 /**
  * @author David Matejka
  */
-class ImmediateExecution extends Object implements IExecutionStrategy
+class ImmediateExecution implements IExecutionStrategy
 {
+	use SmartObject;
 
 
 	public function execute($callback)

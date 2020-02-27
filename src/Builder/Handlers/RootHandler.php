@@ -6,13 +6,14 @@ use Librette\Doctrine\Forms\Builder\Configuration;
 use Librette\Doctrine\Forms\Builder\FormBuilder;
 use Librette\Doctrine\Forms\Builder\IHandler;
 use Librette\Forms\IFormFactory;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class RootHandler extends Object implements IHandler
+class RootHandler implements IHandler
 {
+	use SmartObject;
 
 	/** @var IFormFactory */
 	protected $formFactory;

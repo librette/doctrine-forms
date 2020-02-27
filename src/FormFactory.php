@@ -8,8 +8,9 @@ use Nette;
 /**
  * @author David Matějka
  */
-class FormFactory extends Nette\Object
+class FormFactory
 {
+	use Nette\SmartObject;
 
 	/** @var \Librette\Doctrine\Forms\MapperFactory */
 	protected $mapperFactory;

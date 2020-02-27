@@ -1,13 +1,14 @@
 <?php
 namespace Librette\Doctrine\Forms\Mapper\Handlers\Date;
 
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class DateTimeAdapter extends Object implements IAdapter
+class DateTimeAdapter implements IAdapter
 {
+	use SmartObject;
 
 	/** @var array */
 	protected $defaultFormats = [];

@@ -7,13 +7,14 @@ use Librette\Doctrine\Forms\Builder\Configuration;
 use Librette\Doctrine\Forms\Builder\ContainerBuilder;
 use Librette\Doctrine\Forms\Builder\IHandler;
 use Nette\Forms\Container;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class OneToOneHandler extends Object implements IHandler
+class OneToOneHandler implements IHandler
 {
+	use SmartObject;
 
 	/** @var EntityManager */
 	protected $entityManager;

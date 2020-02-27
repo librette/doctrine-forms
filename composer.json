@@ -10,12 +10,12 @@
 		}
 	],
 	"require": {
-		"php": ">=5.4",
+		"php": ">=7.0",
 		"librette/doctrine": "@dev",
 		"librette/forms": "@dev",
-		"nette/forms": "~2.2",
-		"nette/utils": "~2.2",
-		"nette/component-model": "~2.2",
+		"nette/forms": "~2.4 || ~3.0",
+		"nette/utils": "~2.4 || ~3.0",
+		"nette/component-model": "~2.4 || ~3.0",
 		"doctrine/orm": "~2.4",
 		"symfony/validator": "@dev"
 	},
@@ -25,8 +25,7 @@
 		"nette/tester": "@dev",
 		"kdyby/forms-replicator": "@dev",
 		"kdyby/validator": "@dev",
-		"tracy/tracy": "@stable",
-		"nette/nette": "~2.2"
+		"tracy/tracy": "@stable"
 	},
 	"autoload": {
 		"psr-4": {

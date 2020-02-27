@@ -1,14 +1,14 @@
 <?php
 namespace Librette\Doctrine\Forms\Mapper;
-
-use Nette\Object;
+use Nette\SmartObject;
 use Nette\Utils\Callback;
 
 /**
  * @author David Matejka
  */
-class PostponedExecution extends Object implements IExecutionStrategy
+class PostponedExecution implements IExecutionStrategy
 {
+	use SmartObject;
 
 	/** @var callable[] */
 	protected $callbacks = [];

@@ -10,13 +10,14 @@ use Librette\Doctrine\Forms\Builder\IHandler;
 use Nette\Forms\Controls\ChoiceControl;
 use Nette\Forms\Controls\SelectBox;
 use Nette\Forms\IControl;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class ToOneHandler extends Object implements IHandler
+class ToOneHandler implements IHandler
 {
+	use SmartObject;
 
 	use TChoiceHandler;
 

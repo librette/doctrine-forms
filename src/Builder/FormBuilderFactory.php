@@ -8,13 +8,14 @@ use Librette\Doctrine\Forms\MapperFactory;
 use Librette\Doctrine\Forms\UnexpectedValueException;
 use Librette\Forms\IFormFactory;
 use Librette\Forms\IFormWithMapper;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class FormBuilderFactory extends Object
+class FormBuilderFactory
 {
+	use SmartObject;
 
 	const AUTO = NULL;
 

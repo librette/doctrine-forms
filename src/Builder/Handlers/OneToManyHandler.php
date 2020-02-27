@@ -10,13 +10,14 @@ use Librette\Doctrine\Forms\Builder\ReplicatorBuilder;
 use Librette\Doctrine\Forms\Builder\ControlCloneUtil;
 use Nette\ComponentModel\IComponent;
 use Nette\Forms\Container;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class OneToManyHandler extends Object implements IHandler
+class OneToManyHandler implements IHandler
 {
+	use SmartObject;
 
 	/** @var EntityManager */
 	protected $entityManager;

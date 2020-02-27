@@ -6,13 +6,14 @@ use Librette\Doctrine\Forms\Mapper\Mapper;
 use Librette\Doctrine\Forms\ValidationException;
 use Librette\Doctrine\WrappedEntity;
 use Nette\ComponentModel\Component;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class ChainHandler extends Object implements IHandler
+class ChainHandler implements IHandler
 {
+	use SmartObject;
 
 	/** @var IHandler[] */
 	protected $handlers;

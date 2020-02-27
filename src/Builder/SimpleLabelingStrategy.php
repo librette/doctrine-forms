@@ -2,13 +2,14 @@
 namespace Librette\Doctrine\Forms\Builder;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class SimpleLabelingStrategy extends Object implements ILabelingStrategy
+class SimpleLabelingStrategy implements ILabelingStrategy
 {
+	use SmartObject;
 
 	public function getControlLabel($name, ClassMetadata $metadata)
 	{

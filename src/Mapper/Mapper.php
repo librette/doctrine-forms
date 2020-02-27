@@ -12,7 +12,7 @@ use Nette\ComponentModel\IComponent;
 use Nette\Forms\Controls;
 use Nette\Forms\Form;
 use Nette\Forms\ISubmitterControl;
-use Nette\Object;
+use Nette\SmartObject;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -20,8 +20,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
  * @author David Matějka
  */
-class Mapper extends Object implements IMapper, IValidationMapper
+class Mapper implements IMapper, IValidationMapper
 {
+	use SmartObject;
 
 	const FLUSH = TRUE;
 	const NO_FLUSH = FALSE;

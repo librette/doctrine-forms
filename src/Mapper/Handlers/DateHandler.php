@@ -7,14 +7,15 @@ use Librette\Doctrine\Forms\Mapper\Mapper;
 use Librette\Doctrine\WrappedEntity;
 use Nette\ComponentModel\Component;
 use Nette\Forms\Controls\TextBase;
-use Nette\Object;
+use Nette\SmartObject;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author David Matejka
  */
-class DateHandler extends Object implements IHandler
+class DateHandler implements IHandler
 {
+	use SmartObject;
 
 	/** @var IAdapter */
 	protected $adapter;

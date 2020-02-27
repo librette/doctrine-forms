@@ -2,14 +2,15 @@
 namespace Librette\Doctrine\Forms\Mapper;
 
 use Nette\Forms;
-use Nette\Object;
+use Nette\SmartObject;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 
 /**
  * @author David Matejka
  */
-class DefaultViolationMapper extends Object implements IViolationMapper
+class DefaultViolationMapper implements IViolationMapper
 {
+	use SmartObject;
 
 
 	public function handle(ConstraintViolationInterface $violation, $violationTarget)

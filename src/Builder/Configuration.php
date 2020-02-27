@@ -1,13 +1,14 @@
 <?php
 namespace Librette\Doctrine\Forms\Builder;
 
-use Nette\Object;
+use Nette\SmartObject;
 
 /**
  * @author David Matejka
  */
-class Configuration extends Object
+class Configuration
 {
+	use SmartObject;
 
 	/** @var IHandler */
 	protected $handler;

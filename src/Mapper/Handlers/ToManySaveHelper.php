@@ -13,7 +13,7 @@ use Nette\Forms\Container;
 use Nette\Forms\Controls\BaseControl;
 use Nette\Forms\Controls\MultiChoiceControl;
 use Nette\Forms\IControl;
-use Nette\Object;
+use Nette\SmartObject;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -21,8 +21,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  *
  * @internal
  */
-class ToManySaveHelper extends Object
+class ToManySaveHelper
 {
+	use SmartObject;
 
 	/** @var \Librette\Doctrine\WrappedEntity */
 	protected $wrappedEntity;
